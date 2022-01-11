@@ -1,0 +1,3 @@
+// the configured options and settings for Tutorial
+#define beegenerator_VERSION_MAJOR @beegenerator_VERSION_MAJOR@
+#define beegenerator_VERSION_MINOR @beegenerator_VERSION_MINOR@
