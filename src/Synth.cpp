@@ -9,11 +9,11 @@ Synth::Synth(Config* config) {
   channels = config->get_ints("midi-channels");
   for(int &channel : channels) channel--;
   nVoices = channels.size();
-  for(int j=0; j<nVoices; j++) {
+  for(unsigned int j=0; j<nVoices; j++) {
     if ((channels[j] < 0) || (channels[j] > 15)) {
       throw std::invalid_argument("Midi channel not between 1 and 16.");
     }
-    for(int i=0; i<nVoices; i++) {
+    for(unsigned int i=0; i<nVoices; i++) {
       if ((i != j) && (channels[i] == channels[j])) {
         throw std::invalid_argument("The same midi channel occurs twice.");
       }
@@ -26,13 +26,13 @@ Synth::Synth(Config* config) {
   std::cout << "\n";
 
 
-  for(int i=0; i<nVoices; i++) {
-    voices.push_back(new Voice());
+  for(unsigned int i=0; i<nVoices; i++) {
+    voices.push_back(new Voice(config));
   }
 }
 
 Synth::~Synth() {
-  for(int i=0; i<nVoices; i++) {
+  for(unsigned int i=0; i<nVoices; i++) {
     delete voices[i];
   }
 }
@@ -78,8 +78,8 @@ stk::StkFrames& Synth::tick(stk::StkFrames& frames, unsigned int channel) {
     return frames;
 }
 
-int Synth::getIndexFromChannel(int channel) {
-  for(int i=0; i<nVoices; i++) {
+unsigned int Synth::getIndexFromChannel(int channel) {
+  for(unsigned int i=0; i<nVoices; i++) {
     if (channels[i] == channel) {
       return i;
     }
