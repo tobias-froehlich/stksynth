@@ -12,6 +12,7 @@ class Synth : public stk::Generator {
         std::vector<int> channels;
         std::vector<Voice*> voices;
         unsigned int getIndexFromChannel(int channel);
+        stk::StkFloat maxBending;
     public:
         Synth(Config* config);
         ~Synth();

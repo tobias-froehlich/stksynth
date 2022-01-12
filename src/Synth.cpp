@@ -25,6 +25,11 @@ Synth::Synth(Config* config) {
   }
   std::cout << "\n";
 
+  if (!config->name_occurs("bending")) {
+    throw std::invalid_argument("No bending specified.");
+  }
+  maxBending = config->get_float("bending");
+  std::cout << "Bending: +/-" << maxBending << " seminotes\n";
 
   for(unsigned int i=0; i<nVoices; i++) {
     voices.push_back(new Voice(config));
@@ -47,7 +52,7 @@ void Synth::setMidicode(int channel, int midicode) {
 void Synth::setBending(int channel, stk::StkFloat bending) {
   int index = getIndexFromChannel(channel);
   if (index >= 0) {
-    voices[channel]->setBending(bending);
+    voices[channel]->setBending(bending * maxBending);
   }
 }
 
