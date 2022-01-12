@@ -10,7 +10,8 @@ class Synth : public stk::Generator {
     private:
         int nVoices;
         std::vector<int> channels;
-        Voice* voices[16];
+        std::vector<Voice*> voices;
+        int getIndexFromChannel(int channel);
     public:
         Synth(Config* config);
         ~Synth();

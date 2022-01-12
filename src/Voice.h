@@ -5,7 +5,7 @@
 
 class Voice {
   private:
-    stk::StkFloat frequency;
+    stk::StkFloat frequency = 440.0;
     stk::StkFloat bending = 0.0;
     stk::StkFloat phases[8];
     stk::StkFloat amplitudes[8] = {1.0/4.0, 1.0/9.0, 1.0/16.0, 1.0/25.0, 1.0/36.0, 1.0/49.0, 0.0, 1.0/81.0};
