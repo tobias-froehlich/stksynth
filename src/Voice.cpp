@@ -202,6 +202,31 @@ Voice::Voice(Config* config) {
   }
 
 
+  if (!config->name_occurs("key-amplitudes-x")) {
+    throw std::invalid_argument("Parameter key-amplitudes-x not defined.");
+  }
+  if (!config->name_occurs("key-amplitudes-y")) {
+    throw std::invalid_argument("Parameter key-amplitudes-y not defined.");
+  }
+  std::vector<int> keyAmplitudesX = config->get_ints("key-amplitudes-x");
+  std::vector<stk::StkFloat> keyAmplitudesY = config->get_floats("key-amplitudes-y");
+  if (keyAmplitudesX.size() != keyAmplitudesY.size()) {
+    throw std::invalid_argument("Parameters key-amplitudes-x and key-amplitudes-y do not have the same length.");
+  }
+  for(unsigned int j=0; j<keyAmplitudesX.size(); j++) {
+    if ((keyAmplitudesX[j] < 0) && (keyAmplitudesX[j] >= 128)) {
+      throw std::invalid_argument("Parameter key-amplitudes-x has a value that is not in the range between 0 and 127.");
+    }
+    for(unsigned int i=0; i<keyAmplitudesX.size(); i++) {
+      if ((i != j) && (keyAmplitudesX[i] == keyAmplitudesX[j])) {
+        throw std::invalid_argument("Parameter key-amplitudes-x has a value twice.");
+      }
+    }
+  }
+  interpolateKeyAmplitudes(keyAmplitudesX, keyAmplitudesY);
+  
+
+
   for(unsigned int i=0; i<nOvertones; i++) {
     phases.push_back(0.0);
   }
@@ -223,8 +248,7 @@ Voice::~Voice() {
 
 void Voice::setMidicode(int midicode) {
   this->frequency = cFrequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
-  amplitude = (stk::StkFloat)(148 - midicode) / 148.0;
-  amplitude = amplitude * amplitude;
+  amplitude = keyAmplitudes[midicode];
 }
 
 void Voice::setBending(stk::StkFloat bending) {
@@ -253,4 +277,56 @@ stk::StkFloat Voice::tick() {
      value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
    }
    return value * amplitude;
+}
+
+void Voice::interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,
+    std::vector<stk::StkFloat> keyAmplitudesY) {
+  for(int key=0; key<128; key++) {
+    int minLarger = 128;
+    int maxSmaller = -1;
+    for(int foundKey : keyAmplitudesX) {
+      if ((foundKey <= key) && (foundKey >= maxSmaller)) {
+        maxSmaller = foundKey;
+      }
+      if ((foundKey >= key) && (foundKey <= minLarger)) {
+        minLarger = foundKey;
+      }
+    }
+    if ((minLarger == 128) && (maxSmaller == -1)) {
+      keyAmplitudes.push_back(1.0);
+    } else if (minLarger == 128) {
+      stk::StkFloat valueAtMaxSmaller;
+      for(unsigned int j=0; j<keyAmplitudesX.size(); j++) {
+        int foundKey = keyAmplitudesX[j];
+       if (foundKey == maxSmaller) {
+          valueAtMaxSmaller = keyAmplitudesY[j];
+        }
+      }   
+      keyAmplitudes.push_back(valueAtMaxSmaller);
+    } else if ((maxSmaller == -1) || (minLarger == maxSmaller)) {
+      stk::StkFloat valueAtMinLarger;
+      for(unsigned int j=0; j<keyAmplitudesX.size(); j++) {
+        int foundKey = keyAmplitudesX[j];
+        if (foundKey == minLarger) {
+          valueAtMinLarger = keyAmplitudesY[j];
+        }
+      }
+      keyAmplitudes.push_back(valueAtMinLarger);
+    } else {
+      stk::StkFloat valueAtMinLarger = 0.0;
+      stk::StkFloat valueAtMaxSmaller = 0.0;
+      for(unsigned int j=0; j<keyAmplitudesX.size(); j++) {
+        int foundKey = keyAmplitudesX[j];
+        if (foundKey == minLarger) {
+          valueAtMinLarger = keyAmplitudesY[j];
+        }
+        if (foundKey == maxSmaller) {
+          valueAtMaxSmaller = keyAmplitudesY[j];
+        }
+      }
+      keyAmplitudes.push_back(valueAtMaxSmaller + (valueAtMinLarger - valueAtMaxSmaller) * (stk::StkFloat)((int)key - maxSmaller) / (stk::StkFloat)(minLarger - maxSmaller));
+    }
+    std::cout << key << " " << keyAmplitudes.back() << "\n";
+  }
+
 }

@@ -11,10 +11,13 @@ class Voice {
     unsigned int nOvertones;
     std::vector<stk::StkFloat> phases;
     std::vector<stk::StkFloat> amplitudes;
+    std::vector<stk::StkFloat> keyAmplitudes;
     std::vector<stk::StkFloat> overtones;
     stk::StkFloat amplitude = 1.0;
     stk::StkFloat value;
     std::vector<stk::ADSR*> adsrs;
+    void interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,
+        std::vector<stk::StkFloat> keyAmplitudesY);
   public:
     Voice(Config* config);
     ~Voice();
