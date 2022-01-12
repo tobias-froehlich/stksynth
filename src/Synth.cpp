@@ -79,8 +79,13 @@ stk::StkFloat Synth::tick() {
   return value;
 }
 
-stk::StkFrames& Synth::tick(stk::StkFrames& frames, unsigned int channel) {
-    return frames;
+void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
+    for(unsigned int i=0; i<nBufferSize; i++) {
+      stk::StkFloat value = tick();
+      for(unsigned int c=0; c<nChannels; c++) {
+        *samples++ = value;
+      }
+    }
 }
 
 unsigned int Synth::getIndexFromChannel(int channel) {

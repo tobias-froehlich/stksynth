@@ -22,12 +22,7 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 {
   Synth* synth = (Synth*) dataPointer;
   register StkFloat *samples = (StkFloat *) outputBuffer;
-  for ( unsigned int i=0; i<nBufferFrames; i++ ) {
-    *samples = synth->tick();
-    *(samples + 1) = *samples;
-    samples += 2;
-  }
-
+  synth->tick(samples, 2, nBufferFrames);
   return 0;
 }
 

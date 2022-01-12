@@ -2,11 +2,10 @@
 #define SYNTH_H_
 
 #include <vector>
-#include <Generator.h>
 #include "Config.h"
 #include "Voice.h"
 
-class Synth : public stk::Generator {
+class Synth {
     private:
         unsigned int nVoices;
         std::vector<int> channels;
@@ -21,7 +20,7 @@ class Synth : public stk::Generator {
         void noteOn(int channel);
         void noteOff(int channel);
         stk::StkFloat tick();
-        stk::StkFrames& tick( stk::StkFrames& frames, unsigned int channel = 0);
+        void tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int bufferSize);
 };
 
 #endif
