@@ -11,10 +11,10 @@ Voice::Voice() {
     phases[i] = 0.0;
   }
   adsr = new stk::ADSR();
-  adsr->setAttackTime(0.25);
+  adsr->setAttackTime(0.02);
   adsr->setDecayTime(1.0);
-  adsr->setSustainLevel(0.5);
-  adsr->setReleaseTime(1.0);
+  adsr->setSustainLevel(0.2);
+  adsr->setReleaseTime(0.5);
 }
 
 Voice::~Voice() {
@@ -22,7 +22,9 @@ Voice::~Voice() {
 }
 
 void Voice::setMidicode(int midicode) {
-  this->frequency = cFrequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending) ;
+  this->frequency = cFrequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
+  amplitude = (stk::StkFloat)(148 - midicode) / 148.0;
+  amplitude = amplitude * amplitude;
 }
 
 void Voice::setBending(stk::StkFloat bending) {
@@ -46,5 +48,5 @@ stk::StkFloat Voice::tick() {
      }
      value += sin(phases[i]) * amplitudes[i];
    }
-   return value * adsr->tick();
+   return value * adsr->tick() * amplitude;
 }

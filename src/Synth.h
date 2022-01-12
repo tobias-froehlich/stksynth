@@ -1,14 +1,18 @@
 #ifndef SYNTH_H_
 #define SYNTH_H_
 
-#include "Generator.h"
+#include <vector>
+#include <Generator.h>
+#include "Config.h"
 #include "Voice.h"
 
 class Synth : public stk::Generator {
     private:
+        int nVoices;
+        std::vector<int> channels;
         Voice* voices[16];
     public:
-        Synth();
+        Synth(Config* config);
         ~Synth();
         void setMidicode(int channel, int midicode);
         void setBending(int channel, stk::StkFloat bending);
