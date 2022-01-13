@@ -233,7 +233,7 @@ Voice::Voice(Config* config) {
   }
   interpolateKeyAmplitudes(keyAmplitudesX, keyAmplitudesY);
   
-
+  calculateFrequenciesEqual(config);
 
   for(unsigned int i=0; i<nOvertones; i++) {
     phases.push_back(0.0);
@@ -255,7 +255,7 @@ Voice::~Voice() {
 }
 
 void Voice::setMidicode(int midicode) {
-  this->frequency = cFrequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
+  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
   amplitude = keyAmplitudes[midicode];
 }
 
@@ -285,6 +285,23 @@ stk::StkFloat Voice::tick() {
      value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
    }
    return value * amplitude;
+}
+
+void Voice::calculateFrequenciesEqual(Config* config) {
+  if (!config->name_occurs("reference-midi-key")) {
+    throw std::invalid_argument("Parameter reference-midi-key not defined.");
+  }
+  int referenceMidiKey = config->get_int("reference-midi-key");
+  if (!config->name_occurs("reference-frequency")) {
+    throw std::invalid_argument("Parameter reference-frequency not defined.");
+  }
+  stk::StkFloat referenceFrequency = config->get_float("reference-frequency");
+  for(int i=0; i<128; i++) {
+    frequenciesEqual.push_back(
+        referenceFrequency
+        * pow(cTwelfthRootOfTwo, i - referenceMidiKey)
+    );
+  }
 }
 
 void Voice::interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,

@@ -7,6 +7,7 @@
 class Voice {
   private:
     stk::StkFloat frequency = 440.0;
+    std::vector<stk::StkFloat> frequenciesEqual;
     stk::StkFloat bending = 0.0;
     unsigned int nOvertones;
     std::vector<stk::StkFloat> phases;
@@ -16,6 +17,7 @@ class Voice {
     stk::StkFloat amplitude = 1.0;
     stk::StkFloat value;
     std::vector<stk::ADSR*> adsrs;
+    void calculateFrequenciesEqual(Config* config);
     void interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,
         std::vector<stk::StkFloat> keyAmplitudesY);
   public:
