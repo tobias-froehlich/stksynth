@@ -46,8 +46,27 @@ Synth::Synth(Config* config) {
 
 
   filter = new stk::BiQuad();
-  filter->setResonance(440.0, 0.5, true);
-  filter->setNotch(440.0, 0.5);
+  if (!config->name_occurs("filter-resonance-frequency")) {
+    throw std::invalid_argument("Parameter filter-resonance-frequency not defined.");
+  }
+  if (!config->name_occurs("filter-resonance-radius")) {
+    throw std::invalid_argument("Parameter filter-resonance-radius not defined.");
+  }
+  filter->setResonance(
+      config->get_float("filter-resonance-frequency"),
+      config->get_float("filter-resonance-radius"),
+      true
+  );
+  if (!config->name_occurs("filter-notch-frequency")) {
+    throw std::invalid_argument("Parameter filter-notch-frequency not defined.");
+  }
+  if (!config->name_occurs("filter-notch-radius")) {
+    throw std::invalid_argument("Parameter filter-notch-radius not defined.");
+  }
+  filter->setNotch(
+      config->get_float("filter-notch-frequency"),
+      config->get_float("filter-notch-radius")
+  );
 
 
   if (!config->name_occurs("chorus-delay")) {
