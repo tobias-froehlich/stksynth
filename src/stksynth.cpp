@@ -26,14 +26,21 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   return 0;
 }
 
-void task_user_input(int* flag) {
+void task_user_input(int* flag, Synth* synth) {
   std::string text;
   while (*flag) {
     std::cout << "Enter \"quit\" to quit:\n";
     std::cin >> text;
     if (text.compare("quit") == 0) {
+      synth->stopRecording();
       *flag = 0;
-    }  
+    }
+    if (text.compare("record") == 0) {
+      synth->startRecording();
+    }
+    if (text.compare("stop") == 0) {
+      synth->stopRecording();
+    }
   }
   std::cout << "Quit stksynth.\n";
 }
@@ -130,7 +137,7 @@ int main(int argc, char** argv)
 
   int flag = 1;
 
-  std::thread thread_user_input(task_user_input, &flag);
+  std::thread thread_user_input(task_user_input, &flag, synth);
   std::thread thread_midi_buisiness(task_midi_buisiness, &flag, midiin, synth);
   thread_user_input.join();
   thread_midi_buisiness.join();

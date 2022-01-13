@@ -2,6 +2,8 @@
 #define SYNTH_H_
 
 #include <vector>
+#include <string>
+#include <FileWvOut.h>
 #include "Config.h"
 #include "Voice.h"
 
@@ -12,6 +14,10 @@ class Synth {
         std::vector<Voice*> voices;
         unsigned int getIndexFromChannel(int channel);
         stk::StkFloat maxBending;
+        stk::StkFloat overallAmplitude;
+        std::string outputFileName;
+        stk::FileWvOut* outputFile;
+        int isRecording = 0;
     public:
         Synth(Config* config);
         ~Synth();
@@ -19,6 +25,8 @@ class Synth {
         void setBending(int channel, stk::StkFloat bending);
         void noteOn(int channel);
         void noteOff(int channel);
+        void startRecording();
+        void stopRecording();
         stk::StkFloat tick();
         void tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int bufferSize);
 };
