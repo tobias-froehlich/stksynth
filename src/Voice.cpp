@@ -326,7 +326,6 @@ void Voice::interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,
       }
       keyAmplitudes.push_back(valueAtMaxSmaller + (valueAtMinLarger - valueAtMaxSmaller) * (stk::StkFloat)((int)key - maxSmaller) / (stk::StkFloat)(minLarger - maxSmaller));
     }
-    std::cout << key << " " << keyAmplitudes.back() << "\n";
   }
 
 }

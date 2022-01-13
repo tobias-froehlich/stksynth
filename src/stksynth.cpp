@@ -84,6 +84,7 @@ void printAudioDetails(RtAudio* dac) {
     RtAudio::DeviceInfo deviceInfo = dac->getDeviceInfo(i);
     std::cout << "  device " << i << ": " << deviceInfo.name << "\n";
   }
+  std::cout << "Sample rate of the device: " << dac->getStreamSampleRate() << "\n";
 }
 
 int main(int argc, char** argv)
@@ -100,6 +101,7 @@ int main(int argc, char** argv)
 
   // Set the global sample rate before creating class instances.
   Stk::setSampleRate( 44100.0 );
+  std::cout << "STK sample rate: " << Stk::sampleRate() << "\n";
   RtAudio dac;
   RtMidiIn* midiin;
   // Figure out how many bytes in an StkFloat and setup the RtAudio stream.

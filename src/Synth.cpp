@@ -122,7 +122,7 @@ void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nB
       for(unsigned int c=0; c<nChannels; c++) {
         *samples++ = value;
         if (isRecording) {
-          outputFile->tick(value * 10.0);
+          outputFile->tick(value);
         }      
       }
     }
