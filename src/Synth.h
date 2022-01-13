@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <FileWvOut.h>
+#include <Chorus.h>
 #include "Config.h"
 #include "Voice.h"
 
@@ -12,12 +13,13 @@ class Synth {
         unsigned int nVoices;
         std::vector<int> channels;
         std::vector<Voice*> voices;
-        unsigned int getIndexFromChannel(int channel);
         stk::StkFloat maxBending;
         stk::StkFloat overallAmplitude;
         std::string outputFileName;
         stk::FileWvOut* outputFile;
         int isRecording = 0;
+        stk::Chorus* chorus;
+        unsigned int getIndexFromChannel(int channel);
     public:
         Synth(Config* config);
         ~Synth();

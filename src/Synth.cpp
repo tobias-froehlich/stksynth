@@ -47,12 +47,15 @@ Synth::Synth(Config* config) {
   for(unsigned int i=0; i<nVoices; i++) {
     voices.push_back(new Voice(config));
   }
+
+  chorus = new stk::Chorus();
 }
 
 Synth::~Synth() {
   for(unsigned int i=0; i<nVoices; i++) {
     delete voices[i];
   }
+  delete chorus;
 }
 
 void Synth::setMidicode(int channel, int midicode) {
@@ -119,12 +122,14 @@ stk::StkFloat Synth::tick() {
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
     for(unsigned int i=0; i<nBufferSize; i++) {
       stk::StkFloat value = tick();
-      for(unsigned int c=0; c<nChannels; c++) {
-        *samples++ = value;
-        if (isRecording) {
-          outputFile->tick(value);
-        }      
-      }
+      *samples++ = chorus->tick(value, 0);
+      *samples++ = chorus->lastOut(1);
+      if (isRecording) {
+        stk::StkFrames* frames = new stk::StkFrames(1, 2);
+        (*frames)[0] = *(samples-2);
+        (*frames)[1] = *(samples-1);
+        outputFile->tick(*frames);
+      }      
     }
 }
 
