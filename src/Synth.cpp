@@ -44,11 +44,24 @@ Synth::Synth(Config* config) {
   outputFileName = config->get_string("output-file-name");
   std::cout << "Recording will be written to file starting with \"" << outputFileName << "\".\n";
 
+
+  if (!config->name_occurs("chorus-delay")) {
+    throw std::invalid_argument("Parameter chorus-delay not defined.");
+  }
+  chorus = new stk::Chorus(config->get_float("chorus-delay"));
+  if (!config->name_occurs("chorus-modulation-depth")) {
+    throw std::invalid_argument("Parameter chorus-modulation-depth not defined.");
+  }
+  chorus->setModDepth(config->get_float("chorus-modulation-depth"));
+  if (!config->name_occurs("chorus-modulation-frequency")) {
+    throw std::invalid_argument("Parameter chorus-modulation-frequency not defined.");
+  }
+  chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
+
   for(unsigned int i=0; i<nVoices; i++) {
     voices.push_back(new Voice(config));
   }
 
-  chorus = new stk::Chorus();
 }
 
 Synth::~Synth() {
