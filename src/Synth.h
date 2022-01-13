@@ -5,6 +5,7 @@
 #include <string>
 #include <FileWvOut.h>
 #include <Chorus.h>
+#include <FreeVerb.h>
 #include "Config.h"
 #include "Voice.h"
 
@@ -19,6 +20,7 @@ class Synth {
         stk::FileWvOut* outputFile;
         int isRecording = 0;
         stk::Chorus* chorus;
+        stk::FreeVerb* freeVerb;
         unsigned int getIndexFromChannel(int channel);
     public:
         Synth(Config* config);

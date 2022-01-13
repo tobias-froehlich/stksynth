@@ -58,6 +58,8 @@ Synth::Synth(Config* config) {
   }
   chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
+  freeVerb = new stk::FreeVerb();
+
   for(unsigned int i=0; i<nVoices; i++) {
     voices.push_back(new Voice(config));
   }
@@ -69,6 +71,7 @@ Synth::~Synth() {
     delete voices[i];
   }
   delete chorus;
+  delete freeVerb;
 }
 
 void Synth::setMidicode(int channel, int midicode) {
@@ -135,12 +138,20 @@ stk::StkFloat Synth::tick() {
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
     for(unsigned int i=0; i<nBufferSize; i++) {
       stk::StkFloat value = tick();
-      *samples++ = chorus->tick(value, 0);
-      *samples++ = chorus->lastOut(1);
-      if (isRecording) {
+   
+      stk::StkFloat valueLeft = chorus->tick(value, 0);
+      stk::StkFloat valueRight = chorus->lastOut(1);
+
+      valueLeft = freeVerb->tick(valueLeft, valueRight, 0);
+      valueRight = freeVerb->lastOut(1);
+
+      *samples++ = valueLeft;
+      *samples++ = valueRight;;
+
+    if (isRecording) {
         stk::StkFrames* frames = new stk::StkFrames(1, 2);
-        (*frames)[0] = *(samples-2);
-        (*frames)[1] = *(samples-1);
+        (*frames)[0] = valueLeft;
+        (*frames)[1] = valueRight;
         outputFile->tick(*frames);
       }      
     }
