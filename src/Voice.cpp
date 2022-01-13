@@ -141,10 +141,18 @@ Voice::Voice(Config* config) {
     overtones.push_back(factor);
   }
 
+
+  if (!config->name_occurs("overtone-falloff-power")) {
+    throw std::invalid_argument("Parameter overtone-falloff-power not defined");
+  }
+  stk::StkFloat overtoneFalloffPower = config->get_float("overtone-falloff-power");
   if (!config->name_occurs("overtone-amplitudes")) {
     throw std::invalid_argument("Parameter overtone-amplitudes not defined.");
   }
   amplitudes = config->get_floats("overtone-amplitudes");
+  for(unsigned int i=0; i<nOvertones; i++) {
+    amplitudes[i] /= pow((stk::StkFloat)(i + 1), overtoneFalloffPower);
+  }
   if (overtones.size() != amplitudes.size()) {
     throw std::invalid_argument("Parameter overtone-amplitudes has a wrong length.");
   }
@@ -153,7 +161,7 @@ Voice::Voice(Config* config) {
     sumOfAmplitudes += amplitude;
   }
   for(stk::StkFloat &amplitude : amplitudes) amplitude /= sumOfAmplitudes;
-
+  for(stk::StkFloat &amplitude : amplitudes) std::cout << amplitude << " ";
   if (!config->name_occurs("attack")) {
     throw std::invalid_argument("Parameter attack not defined.");
   }
