@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <FileWvOut.h>
+#include <BiQuad.h>
 #include <Chorus.h>
 #include <FreeVerb.h>
 #include "Config.h"
@@ -19,6 +20,7 @@ class Synth {
         std::string outputFileName;
         stk::FileWvOut* outputFile;
         int isRecording = 0;
+        stk::BiQuad* filter;
         stk::Chorus* chorus;
         stk::FreeVerb* freeVerb;
         unsigned int getIndexFromChannel(int channel);

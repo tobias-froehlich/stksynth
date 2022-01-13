@@ -45,6 +45,11 @@ Synth::Synth(Config* config) {
   std::cout << "Recording will be written to file starting with \"" << outputFileName << "\".\n";
 
 
+  filter = new stk::BiQuad();
+  filter->setResonance(440.0, 0.5, true);
+  filter->setNotch(440.0, 0.5);
+
+
   if (!config->name_occurs("chorus-delay")) {
     throw std::invalid_argument("Parameter chorus-delay not defined.");
   }
@@ -155,7 +160,7 @@ stk::StkFloat Synth::tick() {
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
     for(unsigned int i=0; i<nBufferSize; i++) {
       stk::StkFloat value = tick();
-   
+      value = filter->tick(value);   
       stk::StkFloat valueLeft = chorus->tick(value, 0);
       stk::StkFloat valueRight = chorus->lastOut(1);
 
