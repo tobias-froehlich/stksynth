@@ -58,7 +58,24 @@ Synth::Synth(Config* config) {
   }
   chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
+  
   freeVerb = new stk::FreeVerb();
+  if (!config->name_occurs("free-verb-mix")) {
+    throw std::invalid_argument("Parameter free-verb-mix not defined.");
+  }
+  freeVerb->setEffectMix(config->get_float("free-verb-mix"));
+  if (!config->name_occurs("free-verb-room-size")) {
+    throw std::invalid_argument("Parameter free-verb-room-size not defined.");
+  }
+  freeVerb->setRoomSize(config->get_float("free-verb-room-size"));
+  if (!config->name_occurs("free-verb-damping")) {
+    throw std::invalid_argument("Parameter free-verb-damping not defined.");
+  }
+  freeVerb->setDamping(config->get_float("free-verb-damping"));
+  if (!config->name_occurs("free-verb-width")) {
+    throw std::invalid_argument("Parameter free-verb-width not defined.");
+  }
+  freeVerb->setWidth(config->get_float("free-verb-width"));
 
   for(unsigned int i=0; i<nVoices; i++) {
     voices.push_back(new Voice(config));
