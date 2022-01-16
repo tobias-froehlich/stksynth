@@ -5,6 +5,7 @@
 #include <queue>
 #include <string>
 #include <thread>
+#include <filesystem>
 #include <unistd.h>
 #include <RtAudio.h>
 #include <RtMidi.h>
@@ -12,6 +13,8 @@
 #include "Config.h"
 #include "Synth.h"
 
+
+namespace fs = std::filesystem;
 using namespace stk;
 
 // This tick() function handles sample computation only.  It will be
@@ -26,7 +29,7 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   return 0;
 }
 
-void task_user_input(int* flag, Synth* synth) {
+void task_user_input(int* flag, std::string configFilename, RtAudio* dac, Synth* synth) {
   std::string text;
   while (*flag) {
     std::cout << "Enter \"quit\" to quit:\n";
@@ -41,8 +44,53 @@ void task_user_input(int* flag, Synth* synth) {
     if (text.compare("stop") == 0) {
       synth->stopRecording();
     }
+    if (text.compare("refresh") == 0) {
+      int recording = synth->isRecording();
+      if (recording) {
+        synth->stopRecording();
+      }
+      dac->stopStream();
+      delete synth;
+      Config* config = new Config(configFilename);
+      synth = new Synth(config);
+      dac->startStream();
+      if (recording) {
+        synth->startRecording();
+      }
+    }
   }
   std::cout << "Quit stksynth.\n";
+}
+
+void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth* synth, Config config) {
+  fs::path p = configFilename;
+  auto lastWriteTime = std::filesystem::last_write_time(p);
+  while (*flag) {
+    usleep(1000000);
+    auto newWriteTime = std::filesystem::last_write_time(p);
+    std::cout << (newWriteTime == lastWriteTime) << "\n";
+    if (newWriteTime != lastWriteTime) {
+      int recording = synth->isRecording();
+      if (recording) {
+        synth->stopRecording();
+      }
+      dac->stopStream();
+      delete synth;
+      try {
+        Config newConfig(configFilename);
+        synth = new Synth(&newConfig);
+        dac->startStream();
+        config = newConfig;
+      } catch (std::invalid_argument) {
+        synth = new Synth(&config);
+        dac->startStream();
+      }
+      if (recording) {
+        synth->startRecording();
+      }
+    } 
+    lastWriteTime = newWriteTime;
+  }
 }
 
 void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
@@ -89,11 +137,14 @@ void printAudioDetails(RtAudio* dac) {
 
 int main(int argc, char** argv)
 {
-  Config* config;
+  Config config;
+  std::string configFilename;
+//  fs::path p = configFilename;
+//  std::chrono::time_point lastWriteTime = std::filesystem::last_write_time(p);
   if (argc == 2) {
-    std::string configFilename(argv[1]);
+    configFilename.assign(argv[1]);
+    config = Config(configFilename);
     std::cout << "Configuration filename: " << configFilename << "\n";
-    config = new Config(configFilename);
   } else {
     std::cout << "No parameter file given.\n";
     return 0;
@@ -102,50 +153,53 @@ int main(int argc, char** argv)
   // Set the global sample rate before creating class instances.
   Stk::setSampleRate( 44100.0 );
   std::cout << "STK sample rate: " << Stk::sampleRate() << "\n";
-  RtAudio dac;
+  RtAudio* dac = new RtAudio();
   RtMidiIn* midiin;
   // Figure out how many bytes in an StkFloat and setup the RtAudio stream.
   RtAudio::StreamParameters parameters;
-  if (!config->name_occurs("device-id")) {
+  if (!config.name_occurs("device-id")) {
     throw std::invalid_argument("No device-id specified.");
   }
-  parameters.deviceId = config->get_int("device-id"); //dac.getDefaultOutputDevice();
+  parameters.deviceId = config.get_int("device-id");
   parameters.nChannels = 2;
   RtAudioFormat format = ( sizeof(StkFloat) == 8 ) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
   unsigned int bufferFrames = RT_BUFFER_SIZE;
-  Synth* synth = new Synth(config);
+  Synth* synth = new Synth(&config);
   try {
-    dac.openStream( &parameters, NULL, format, (unsigned int)Stk::sampleRate(), &bufferFrames, &tick, (void*) synth );
-    printAudioDetails(&dac);
+    dac->openStream( &parameters, NULL, format, (unsigned int)Stk::sampleRate(), &bufferFrames, &tick, (void*) synth );
+    printAudioDetails(dac);
   }
   catch ( RtAudioError &error ) {
     error.printMessage();
     exit(EXIT_FAILURE);
   }
-  try {
-    dac.startStream();
-  }
-  catch ( RtAudioError &error ) {
-    error.printMessage();
-    exit(EXIT_FAILURE);
-  }
-  try {
+ try {
     midiin = new RtMidiIn(RtMidi::UNSPECIFIED, "stksynth in");
     midiin->openVirtualPort();
   } catch (RtMidiError &error) {
     error.printMessage();
     exit(EXIT_FAILURE);
   }
-
+  try {
+    dac->startStream();
+  }
+  catch ( RtAudioError &error ) {
+    error.printMessage();
+    exit(EXIT_FAILURE);
+  } 
+ 
   int flag = 1;
 
-  std::thread thread_user_input(task_user_input, &flag, synth);
+  std::thread thread_user_input(task_user_input, &flag, configFilename, dac, synth);
+  std::thread thread_watch_file(task_watch_file, &flag, configFilename, dac, synth, config);
   std::thread thread_midi_buisiness(task_midi_buisiness, &flag, midiin, synth);
   thread_user_input.join();
+  thread_watch_file.join();
   thread_midi_buisiness.join();
   
   try {
-    dac.closeStream();
+    dac->closeStream();
+    delete dac;
   } catch ( RtAudioError &error ) {
     error.printMessage();
     exit(EXIT_FAILURE);

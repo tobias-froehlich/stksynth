@@ -19,7 +19,7 @@ class Synth {
         stk::StkFloat overallAmplitude;
         std::string outputFileName;
         stk::FileWvOut* outputFile;
-        int isRecording = 0;
+        int recording = 0;
         stk::BiQuad* filter;
         stk::Chorus* chorus;
         stk::FreeVerb* freeVerb;
@@ -33,6 +33,7 @@ class Synth {
         void noteOff(int channel);
         void startRecording();
         void stopRecording();
+        int isRecording();
         stk::StkFloat tick();
         void tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int bufferSize);
 };

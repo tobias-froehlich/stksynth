@@ -154,17 +154,21 @@ void Synth::startRecording() {
 
   outputFile = new stk::FileWvOut();
   outputFile->openFile(fullFileName, 2, stk::FileWrite::FILE_WAV, stk::Stk::STK_SINT16);
-  isRecording = 1;
+  recording = 1;
   std::cout << "Recording started. Data written to " << fullFileName << " .\n";
 }
 
 void Synth::stopRecording() {
-  if (isRecording) {
-    isRecording = 0;
+  if (recording) {
+    recording = 0;
     outputFile->closeFile();
     delete outputFile;
     std::cout << "Recording stopped.\n";
   }
+}
+
+int Synth::isRecording() {
+  return recording;
 }
 
 stk::StkFloat Synth::tick() {
@@ -189,7 +193,7 @@ void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nB
       *samples++ = valueLeft;
       *samples++ = valueRight;;
 
-    if (isRecording) {
+    if (recording) {
         stk::StkFrames* frames = new stk::StkFrames(1, 2);
         (*frames)[0] = valueLeft;
         (*frames)[1] = valueRight;
