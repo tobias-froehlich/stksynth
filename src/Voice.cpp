@@ -235,10 +235,7 @@ Voice::Voice(Config* config) {
   
   calculateFrequenciesEqual(config);
 
-  for(unsigned int i=0; i<nOvertones; i++) {
-    phases.push_back(0.0);
-  }
-  
+ 
   for(unsigned int i=0; i<nOvertones; i++) {
     adsrs.push_back(new stk::ADSR());
     adsrs.back()->setAttackTime(attack * overtoneAttack[i]);
@@ -254,38 +251,15 @@ Voice::~Voice() {
   }
 }
 
-void Voice::setMidicode(int midicode) {
-  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
-  amplitude = keyAmplitudes[midicode];
-}
+void Voice::setMidicode(int midicode) {}
 
-void Voice::setBending(stk::StkFloat bending) {
-  this->bending = bending;
-}
+void Voice::setBending(stk::StkFloat bending) {}
 
-void Voice::noteOn() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOn();
-  }
-}
+void Voice::noteOn() {}
 
-void Voice::noteOff() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOff();
-  }
-}
+void Voice::noteOff() {}
 
-stk::StkFloat Voice::tick() {
-   stk::StkFloat value = 0.0;
-   for(unsigned int i=0; i<nOvertones; i++) {
-     phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];
-     if (phases[i] >= cTwoPi) {
-       phases[i] -= cTwoPi;
-     }
-     value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
-   }
-   return value * amplitude;
-}
+stk::StkFloat Voice::tick() {return 0.0;}
 
 void Voice::calculateFrequenciesEqual(Config* config) {
   if (!config->name_occurs("reference-midi-key")) {

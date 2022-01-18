@@ -2,15 +2,16 @@
 #define VOICE_H_
 
 #include <ADSR.h>
+#include <Noise.h>
+#include <BiQuad.h>
 #include "Config.h"
 
 class Voice {
-  private:
+  protected:
     stk::StkFloat frequency = 440.0;
     std::vector<stk::StkFloat> frequenciesEqual;
     stk::StkFloat bending = 0.0;
     unsigned int nOvertones;
-    std::vector<stk::StkFloat> phases;
     std::vector<stk::StkFloat> amplitudes;
     std::vector<stk::StkFloat> keyAmplitudes;
     std::vector<stk::StkFloat> overtones;
@@ -22,12 +23,12 @@ class Voice {
         std::vector<stk::StkFloat> keyAmplitudesY);
   public:
     Voice(Config* config);
-    ~Voice();
-    void setMidicode(int midicode);
-    void setBending(stk::StkFloat bending);
-    void noteOn();
-    void noteOff();
-    stk::StkFloat tick();
+    virtual ~Voice();
+    virtual void setMidicode(int midicode);
+    virtual void setBending(stk::StkFloat bending);
+    virtual void noteOn();
+    virtual void noteOff();
+    virtual stk::StkFloat tick();
 };
 
 #endif

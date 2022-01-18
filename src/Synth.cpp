@@ -1,6 +1,9 @@
 #include <Stk.h>
 #include <ctime>
 #include "Synth.h"
+#include "Voice.h"
+#include "AdditiveVoice.h"
+#include "NoiseVoice.h"
 
 Synth::Synth(Config* config) {
 
@@ -101,8 +104,20 @@ Synth::Synth(Config* config) {
   }
   freeVerb->setWidth(config->get_float("free-verb-width"));
 
-  for(unsigned int i=0; i<nVoices; i++) {
-    voices.push_back(new Voice(config));
+  if (!config->name_occurs("voice-type")) {
+    throw std::invalid_argument("Parameter voice_type not defined.");
+  }
+  std::string voiceType = config->get_string("voice-type");
+  if (voiceType.compare("ADDITIVE") == 0) {
+    for(unsigned int i=0; i<nVoices; i++) {
+      voices.push_back(new AdditiveVoice(config));
+    }
+  } else if (voiceType.compare("NOISE") == 0) {
+    for(unsigned int i=0; i<nVoices; i++) {
+      voices.push_back(new NoiseVoice(config));
+    }
+  } else {
+    throw std::invalid_argument("Parameter voice-type has an unknown value.");
   }
 
 }

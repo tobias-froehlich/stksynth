@@ -4,5 +4,7 @@ add_executable(stksynth
   Config.cpp
   Synth.cpp
   Voice.cpp
+  AdditiveVoice.cpp
+  NoiseVoice.cpp
   
 )
