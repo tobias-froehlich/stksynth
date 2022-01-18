@@ -10,7 +10,7 @@
 class NoiseVoice : public Voice {
   private:
     stk::StkFloat frequencySharpness;
-    stk::Noise* noise;
+    std::vector<stk::Noise*> noiseGenerators;
     std::vector<stk::BiQuad*> filters;
   public:
     NoiseVoice(Config* config);

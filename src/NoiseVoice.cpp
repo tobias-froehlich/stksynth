@@ -12,16 +12,17 @@ NoiseVoice::NoiseVoice(Config* config) : Voice(config) {
 
   for(unsigned int i=0; i<nOvertones; i++) {
     filters.push_back(new stk::BiQuad());
+    noiseGenerators.push_back(new stk::Noise(std::rand()));
   }
-  noise = new stk::Noise();
 }
 
 NoiseVoice::~NoiseVoice() {
   for(stk::BiQuad* filter : filters) {
-    delete filter;
-    
+    delete filter;    
   }
-  delete noise;
+  for(stk::Noise* noiseGenerator : noiseGenerators) {
+    delete noiseGenerator;
+  }
 }
 
 void NoiseVoice::setMidicode(int midicode) {
@@ -49,7 +50,6 @@ void NoiseVoice::noteOff() {
 }
 
 stk::StkFloat NoiseVoice::tick() {
-   stk::StkFloat noiseValue = noise->tick();
    stk::StkFloat value = 0.0;
    for(unsigned int i=0; i<nOvertones; i++) {
 //     phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];
@@ -57,6 +57,7 @@ stk::StkFloat NoiseVoice::tick() {
 //       phases[i] -= cTwoPi;
 //     }
 //     value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
+      stk::StkFloat noiseValue = noiseGenerators[i]->tick();
       value += filters[i]->tick(noiseValue) * adsrs[i]->tick() * amplitudes[i];
    }
    return value * amplitude;

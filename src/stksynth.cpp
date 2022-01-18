@@ -137,6 +137,7 @@ void printAudioDetails(RtAudio* dac) {
 
 int main(int argc, char** argv)
 {
+  std::srand(std::time(0));
   Config config;
   std::string configFilename;
 //  fs::path p = configFilename;
