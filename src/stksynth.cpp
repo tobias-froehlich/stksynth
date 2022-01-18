@@ -24,7 +24,7 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *dataPointer )
 {
   Synth* synth = (Synth*) dataPointer;
-  register StkFloat *samples = (StkFloat *) outputBuffer;
+  StkFloat *samples = (StkFloat *) outputBuffer;
   synth->tick(samples, 2, nBufferFrames);
   return 0;
 }
@@ -81,7 +81,7 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
         synth = new Synth(&newConfig);
         dac->startStream();
         config = newConfig;
-      } catch (std::invalid_argument) {
+      } catch (std::invalid_argument const&) {
         synth = new Synth(&config);
         dac->startStream();
       }
