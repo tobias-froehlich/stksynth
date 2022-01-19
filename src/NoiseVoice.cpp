@@ -13,6 +13,7 @@ NoiseVoice::NoiseVoice(Config* config) : Voice(config) {
   for(unsigned int i=0; i<nOvertones; i++) {
     filters.push_back(new stk::BiQuad());
     noiseGenerators.push_back(new stk::Noise(std::rand()));
+    sounding.push_back(0);
   }
 }
 
@@ -30,7 +31,7 @@ void NoiseVoice::setMidicode(int midicode) {
   for(unsigned int i=0; i<nOvertones; i++) {
     filters[i]->setResonance(frequency * overtones[i], 1.0 - pow(10.0, -frequencySharpness));
   }
-  amplitude = keyAmplitudes[midicode] * pow(10.0, -frequencySharpness*0.5);
+  amplitude = keyAmplitudes[midicode] * pow(10.0, -frequencySharpness*0.3);
 }
 
 void NoiseVoice::setBending(stk::StkFloat bending) {
@@ -38,28 +39,33 @@ void NoiseVoice::setBending(stk::StkFloat bending) {
 }
 
 void NoiseVoice::noteOn() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOn();
+  for(unsigned int i=0; i<nOvertones; i++) {
+    adsrs[i]->keyOn();
+    sounding[i] = 1;
   }
 }
 
 void NoiseVoice::noteOff() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOff();
+  for(unsigned int i=0; i<nOvertones; i++) {
+    adsrs[i]->keyOff();
   }
 }
 
 stk::StkFloat NoiseVoice::tick() {
    stk::StkFloat value = 0.0;
    for(unsigned int i=0; i<nOvertones; i++) {
-//     phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];
-//     if (phases[i] >= cTwoPi) {
-//       phases[i] -= cTwoPi;
-//     }
-//     value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
-      stk::StkFloat noiseValue = noiseGenerators[i]->tick();
-      value += filters[i]->tick(noiseValue) * adsrs[i]->tick() * amplitudes[i];
+      stk::StkFloat noiseValue = 0.0;
+      if (sounding[i]) {
+        if (adsrs[i]->getState() != stk::ADSR::IDLE) {
+          noiseValue = noiseGenerators[i]->tick();
+        } else {
+          sounding[i] = 0;
+          filters[i]->setResonance(0.0, 0.0);
+        }
+      }
+      stk::StkFloat adsrValue = adsrs[i]->tick();
+      value += filters[i]->tick(noiseValue * adsrValue * amplitudes[i] * amplitude) * adsrValue ;
    }
-   return value * amplitude;
+   return value;
 }
 
