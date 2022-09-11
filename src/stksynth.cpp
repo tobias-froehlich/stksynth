@@ -112,10 +112,12 @@ void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
       if ((message[0] >= 144) && (message[0] < 144 + 16)) {
           int channel = message[0] - 144;
           int midicode = message[1];
+          int velocity = message[2];
           if (message[2] == 0) {
             message[0] = 128 + channel;
           } else {
             synth->setMidicode(channel, midicode);
+            synth->setVelocity(channel, velocity);
             synth->noteOn(channel);
           }
       }

@@ -46,7 +46,7 @@ void SampleVoice::noteOff() {
 }
 
 stk::StkFloat SampleVoice::tick() {
-    return this->sampleFileData->tick() * adsr->tick() * amplitude;
+    return this->sampleFileData->tick() * adsr->tick() * amplitude * velocityAmplitude;
 //   stk::StkFloat value = 0.0;
 //   for(unsigned int i=0; i<nOvertones; i++) {
 //     phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];

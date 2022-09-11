@@ -49,6 +49,6 @@ stk::StkFloat AdditiveVoice::tick() {
      }
      value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
    }
-   return value * amplitude * adsr->tick();
+   return value * amplitude * adsr->tick() * velocityAmplitude;
 }
 

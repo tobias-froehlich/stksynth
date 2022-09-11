@@ -39,6 +39,27 @@ Voice::Voice(Config* config) {
   stk::StkFloat release = config->get_float("release");
 
 
+  if (!config->name_occurs("use-velocity")) {
+    throw std::invalid_argument("Parameter use-velocity not defined.");
+  }
+  std::string useVelocityString = config->get_string("use-velocity");
+  if (useVelocityString.compare("true") == 0) {
+    useVelocity = 1;
+  } else if (useVelocityString.compare("false") == 0) {
+    useVelocity = 0;
+  } else {
+    throw std::invalid_argument("Parameter use-velocity must be true or false.");
+  }
+  if (useVelocity) {
+    if (!config->name_occurs("velocity-exponent")) {
+      throw std::invalid_argument("Parameter velocity-exponent not defined.");
+    }
+    velocityExponent = config->get_float("velocity-exponent");
+    if (velocityExponent <= 0.0) {
+      throw std::invalid_argument("Parameter velocity-exponent must be greater than zero.");
+    }
+  }
+
   if (!config->name_occurs("key-amplitudes-x")) {
     throw std::invalid_argument("Parameter key-amplitudes-x not defined.");
   }
@@ -80,6 +101,14 @@ Voice::~Voice() {
 void Voice::setMidicode(int midicode) {}
 
 void Voice::setBending(stk::StkFloat bending) {}
+
+void Voice::setVelocity(int velocity) {
+  if (useVelocity) {
+    velocityAmplitude = pow((stk::StkFloat)velocity / (stk::StkFloat)255.0, velocityExponent);
+  } else {
+    velocityAmplitude = 1.0;
+  }
+}
 
 void Voice::noteOn() {}
 

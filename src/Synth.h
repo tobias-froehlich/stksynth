@@ -28,6 +28,7 @@ class Synth {
         Synth(Config* config);
         ~Synth();
         void setMidicode(int channel, int midicode);
+        void setVelocity(int channel, int velocity);
         void setBending(int channel, stk::StkFloat bending);
         void noteOn(int channel);
         void noteOff(int channel);

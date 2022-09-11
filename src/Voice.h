@@ -15,6 +15,9 @@ class Voice {
     std::vector<stk::StkFloat> keyAmplitudes;
     stk::StkFloat amplitude = 1.0;
     stk::ADSR* adsr;
+    int useVelocity;
+    stk::StkFloat velocityExponent;
+    stk::StkFloat velocityAmplitude;
     stk::StkFloat two;
     stk::StkFloat three;
     stk::StkFloat five;
@@ -27,6 +30,7 @@ class Voice {
     virtual ~Voice();
     virtual void setMidicode(int midicode);
     virtual void setBending(stk::StkFloat bending);
+    virtual void setVelocity(int velocity);
     virtual void noteOn();
     virtual void noteOff();
     virtual stk::StkFloat tick();

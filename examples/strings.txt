@@ -17,6 +17,9 @@ decay 2.0
 sustain 0.8
 release 0.4
 
+use-velocity true
+velocity-exponent 1.0
+
 factor-two 2.00
 factor-three 3.00
 factor-five 5.00

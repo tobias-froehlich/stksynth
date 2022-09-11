@@ -104,7 +104,7 @@ stk::StkFloat NoiseVoice::tick() {
         }
       }
 //      value += filters[i][0]->tick(noiseValue * adsrValue * amplitudes[i] * amplitude) * adsrValue ;
-      value += noiseValue * adsrValue * amplitude;
+      value += noiseValue * adsrValue * amplitude * velocityAmplitude;
    }
    return value;
 //   stk::StkFloat value = 0.0;

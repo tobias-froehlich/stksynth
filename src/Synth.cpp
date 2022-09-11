@@ -144,6 +144,13 @@ void Synth::setMidicode(int channel, int midicode) {
   }
 }
 
+void Synth::setVelocity(int channel, int velocity) {
+  int index = getIndexFromChannel(channel);
+  if (index >= 0) {
+    voices[index]->setVelocity(velocity);
+  }
+}
+
 void Synth::setBending(int channel, stk::StkFloat bending) {
   int index = getIndexFromChannel(channel);
   if (index >= 0) {
