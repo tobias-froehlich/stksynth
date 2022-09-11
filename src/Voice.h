@@ -11,13 +11,14 @@ class Voice {
     stk::StkFloat frequency = 440.0;
     std::vector<stk::StkFloat> frequenciesEqual;
     stk::StkFloat bending = 0.0;
-    unsigned int nOvertones;
     std::vector<stk::StkFloat> amplitudes;
     std::vector<stk::StkFloat> keyAmplitudes;
-    std::vector<stk::StkFloat> overtones;
     stk::StkFloat amplitude = 1.0;
+    stk::ADSR* adsr;
+    stk::StkFloat two;
+    stk::StkFloat three;
+    stk::StkFloat five;
     stk::StkFloat value;
-    std::vector<stk::ADSR*> adsrs;
     void calculateFrequenciesEqual(Config* config);
     void interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,
         std::vector<stk::StkFloat> keyAmplitudesY);

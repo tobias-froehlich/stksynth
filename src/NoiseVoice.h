@@ -5,9 +5,10 @@
 #include <Noise.h>
 #include <BiQuad.h>
 #include "Voice.h"
+#include "OvertoneVoice.h"
 #include "Config.h"
 
-class NoiseVoice : public Voice {
+class NoiseVoice : public OvertoneVoice {
   private:
     stk::StkFloat frequencySharpness;
     std::vector<stk::Noise*> noiseGenerators;

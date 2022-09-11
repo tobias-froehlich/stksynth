@@ -1,11 +1,10 @@
 #include <math.h>
 #include <Stk.h>
 #include <ADSR.h>
-#include "Voice.h"
 #include "AdditiveVoice.h"
 #include "const.h"
 
-AdditiveVoice::AdditiveVoice(Config* config) : Voice(config) {
+AdditiveVoice::AdditiveVoice(Config* config) : OvertoneVoice(config) {
   for(unsigned int i=0; i<nOvertones; i++) {
     phases.push_back(0.0);
   }
@@ -13,14 +12,14 @@ AdditiveVoice::AdditiveVoice(Config* config) : Voice(config) {
 }
 
 AdditiveVoice::~AdditiveVoice() {
-  for(stk::ADSR* adsr : adsrs) {
-    delete adsr;
-  }
 }
 
 void AdditiveVoice::setMidicode(int midicode) {
+  std::cout << "additive voice set midi code\n";
   this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
+  std::cout << "frequency set\n";
   amplitude = keyAmplitudes[midicode];
+  std::cout << "keyAmplitudes set\n";
 }
 
 void AdditiveVoice::setBending(stk::StkFloat bending) {
@@ -28,15 +27,17 @@ void AdditiveVoice::setBending(stk::StkFloat bending) {
 }
 
 void AdditiveVoice::noteOn() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOn();
+  for(stk::ADSR* overtoneAdsr : adsrs) {
+    overtoneAdsr->keyOn();
   }
+  adsr->keyOn();
 }
 
 void AdditiveVoice::noteOff() {
-  for(stk::ADSR* adsr : adsrs) {
-    adsr->keyOff();
+  for(stk::ADSR* overtoneAdsr : adsrs) {
+    overtoneAdsr->keyOff();
   }
+  adsr->keyOn();
 }
 
 stk::StkFloat AdditiveVoice::tick() {
@@ -48,6 +49,6 @@ stk::StkFloat AdditiveVoice::tick() {
      }
      value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
    }
-   return value * amplitude;
+   return value * amplitude * adsr->tick();
 }
 

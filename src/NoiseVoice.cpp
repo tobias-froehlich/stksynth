@@ -4,7 +4,7 @@
 #include "NoiseVoice.h"
 #include "const.h"
 
-NoiseVoice::NoiseVoice(Config* config) : Voice(config) {
+NoiseVoice::NoiseVoice(Config* config) : OvertoneVoice(config) {
   if (!config->name_occurs("frequency-sharpness")) {
     throw std::invalid_argument("Parameter frequency-sharpness not defined.");
   }
@@ -41,6 +41,7 @@ void NoiseVoice::setMidicode(int midicode) {
   this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
   for(unsigned int i=0; i<nOvertones; i++) {
     for(unsigned int j=0; j<nFilters; j++) {
+      std::cout << overtones[i] << " ";
       filters[i][j]->setResonance(frequency * overtones[i], 1.0 - pow(10.0, -frequencySharpness), false);
     }
   }
@@ -60,6 +61,7 @@ void NoiseVoice::noteOn() {
     adsrs[i]->keyOn();
     sounding[i] = 1;
   }
+  adsr->keyOn();
   maxBeforeFilter = 0.0;
   maxAfterFilter = 0.0;
 }
@@ -68,10 +70,12 @@ void NoiseVoice::noteOff() {
   for(unsigned int i=0; i<nOvertones; i++) {
     adsrs[i]->keyOff();
   }
+  adsr->keyOff();
   std::cout << maxBeforeFilter << " " << maxAfterFilter << "\n";
 }
 
 stk::StkFloat NoiseVoice::tick() {
+
    stk::StkFloat value = 0.0;
    for(unsigned int i=0; i<nOvertones; i++) {
       stk::StkFloat noiseValue = 0.0;
@@ -103,5 +107,37 @@ stk::StkFloat NoiseVoice::tick() {
       value += noiseValue * adsrValue * amplitude;
    }
    return value;
+//   stk::StkFloat value = 0.0;
+//   stk::StkFloat overallAdsrValue = adsr->tick();
+//    for(unsigned int i=0; i<nOvertones; i++) {
+//      stk::StkFloat noiseValue = 0.0;
+//      if (sounding[i]) {
+//        if (adsrs[i]->getState() != stk::ADSR::IDLE) {
+//          noiseValue = noiseGenerators[i]->tick() * amplitudes[i];
+//        } else {
+//          sounding[i] = 0;
+//          for(unsigned int j=0; j<nFilters; j++) {
+//            filters[i][j]->setResonance(0.0, 0.0);
+//          }
+//        }
+//      }
+//      stk::StkFloat adsrValue = adsrs[i]->tick() * overallAdsrValue;
+//      if (i == 0) {
+//        if (noiseValue > maxBeforeFilter) {
+//          maxBeforeFilter = noiseValue;
+//        }
+//      }
+//      for(unsigned int j=0; j<nFilters; j++) {
+//          noiseValue = filters[i][j]->tick(noiseValue) * factor[j];
+//      }
+//      if (i == 0) {
+//        if (noiseValue > maxAfterFilter) {
+//           maxAfterFilter = noiseValue;
+//        }
+//      }
+////      value += filters[i][0]->tick(noiseValue * adsrValue * amplitudes[i] * amplitude) * adsrValue ;
+//      value += noiseValue * adsrValue * amplitude;
+//   }
+//   return value;
 }
 

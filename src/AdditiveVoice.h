@@ -2,10 +2,10 @@
 #define ADDITIVE_VOICE_H_
 
 #include <ADSR.h>
-#include "Voice.h"
+#include "OvertoneVoice.h"
 #include "Config.h"
 
-class AdditiveVoice : public Voice {
+class AdditiveVoice : public OvertoneVoice {
   private:
     std::vector<stk::StkFloat> phases;
   public:

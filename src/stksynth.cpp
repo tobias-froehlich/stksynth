@@ -68,7 +68,7 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
   while (*flag) {
     usleep(1000000);
     auto newWriteTime = std::filesystem::last_write_time(p);
-    std::cout << (newWriteTime == lastWriteTime) << "\n";
+    // std::cout << (newWriteTime == lastWriteTime) << "\n";
     if (newWriteTime != lastWriteTime) {
       int recording = synth->isRecording();
       if (recording) {
@@ -101,6 +101,13 @@ void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
     message.clear();
     midiin->getMessage(&message);
     nBytes = message.size();
+    if (nBytes > 0) {
+      std::cout << "midi: ";
+      for (unsigned char byte : message) {
+        std::cout << (int)byte << " ";
+      }
+      std::cout << "\n";
+    }
     if (nBytes >= 3) {
       if ((message[0] >= 144) && (message[0] < 144 + 16)) {
           int channel = message[0] - 144;
@@ -194,10 +201,10 @@ int main(int argc, char** argv)
   std::thread thread_user_input(task_user_input, &flag, configFilename, dac, synth);
   std::thread thread_watch_file(task_watch_file, &flag, configFilename, dac, synth, config);
   std::thread thread_midi_buisiness(task_midi_buisiness, &flag, midiin, synth);
-  thread_user_input.join();
-  thread_watch_file.join();
   thread_midi_buisiness.join();
-  
+  thread_watch_file.join();
+  thread_user_input.join();
+
   try {
     dac->closeStream();
     delete dac;
@@ -205,6 +212,7 @@ int main(int argc, char** argv)
     error.printMessage();
     exit(EXIT_FAILURE);
   }
+
 
   try {
     midiin->closePort();

@@ -4,6 +4,7 @@
 #include "Voice.h"
 #include "AdditiveVoice.h"
 #include "NoiseVoice.h"
+#include "SampleVoice.h"
 
 Synth::Synth(Config* config) {
 
@@ -104,6 +105,8 @@ Synth::Synth(Config* config) {
   }
   freeVerb->setWidth(config->get_float("free-verb-width"));
 
+  std::cout << "nVoices = " << nVoices << "\n";
+
   if (!config->name_occurs("voice-type")) {
     throw std::invalid_argument("Parameter voice_type not defined.");
   }
@@ -115,6 +118,10 @@ Synth::Synth(Config* config) {
   } else if (voiceType.compare("NOISE") == 0) {
     for(unsigned int i=0; i<nVoices; i++) {
       voices.push_back(new NoiseVoice(config));
+    }
+  } else if (voiceType.compare("SAMPLE") == 0) {
+    for (unsigned int i=0; i<nVoices; i++) {
+      voices.push_back(new SampleVoice(config));
     }
   } else {
     throw std::invalid_argument("Parameter voice-type has an unknown value.");
@@ -140,21 +147,23 @@ void Synth::setMidicode(int channel, int midicode) {
 void Synth::setBending(int channel, stk::StkFloat bending) {
   int index = getIndexFromChannel(channel);
   if (index >= 0) {
-    voices[channel]->setBending(bending * maxBending);
+    voices[index]->setBending(bending * maxBending);
   }
 }
 
 void Synth::noteOn(int channel) {
   int index = getIndexFromChannel(channel);
+  std::cout << "channel (on): " << channel << " on  index " << index << "\n";
   if (index >= 0) {
-    voices[channel]->noteOn();
+    voices[index]->noteOn();
   }
 }
 
 void Synth::noteOff(int channel) {
+  std::cout << "channel (off): " << channel << "\n";
   int index = getIndexFromChannel(channel);
   if (index >= 0) {
-    voices[channel]->noteOff();
+    voices[index]->noteOff();
   }
 }
 
