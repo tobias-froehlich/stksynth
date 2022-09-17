@@ -19,6 +19,8 @@ SampleVoice::SampleVoice(Config* config) : Voice(config) {
   this->sampleFileData = new stk::FileWvIn();
   this->sampleFileData->openFile(this->sampleFileName);
 
+  this->sampleFileData->setInterpolate(true);
+
 }
 
 SampleVoice::~SampleVoice() {
@@ -28,7 +30,7 @@ SampleVoice::~SampleVoice() {
 
 void SampleVoice::setMidicode(int midicode) {
   this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
-  sampleFileData->setRate(frequency / sampleFrequency);
+  sampleFileData->setRate(sampleFileData->getFileRate() / 44100.0 * frequency / sampleFrequency);
   amplitude = keyAmplitudes[midicode];
 }
 
