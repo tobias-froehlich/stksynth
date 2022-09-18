@@ -37,7 +37,7 @@ void AdditiveVoice::noteOff() {
   for(stk::ADSR* overtoneAdsr : adsrs) {
     overtoneAdsr->keyOff();
   }
-  adsr->keyOn();
+  adsr->keyOff();
 }
 
 stk::StkFloat AdditiveVoice::tick() {
