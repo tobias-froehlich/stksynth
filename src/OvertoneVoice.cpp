@@ -7,6 +7,23 @@
 
 OvertoneVoice::OvertoneVoice(Config* config) : Voice(config) {
   value = 0.0;
+  
+  if (!config->name_occurs("factor-two")) {
+    throw std::invalid_argument("Parameter factor-two not defined.");
+  }
+  two = config->get_float("factor-two");
+  if (!config->name_occurs("factor-three")) {
+    throw std::invalid_argument("Parameter factor-three not defined.");
+  }
+  three = config->get_float("factor-three");
+  if (!config->name_occurs("factor-five")) {
+    throw std::invalid_argument("Parameter factor-five not defined.");
+  }
+  five = config->get_float("factor-five");
+  if(!config->name_occurs("factor-seven")) {
+    throw std::invalid_argument("Parameter factor-seven not defined.");
+  }
+  seven = config->get_float("factor-seven");
 
   if (!config->name_occurs("overtones")) {
     throw std::invalid_argument("Parameter overtones not defined.");
@@ -51,7 +68,7 @@ OvertoneVoice::OvertoneVoice(Config* config) : Voice(config) {
         factor = two * three;
         break;
       case 7:
-        factor = 7.0;
+        factor = seven;
         break;
       case 8:
         factor = two * two * two;
@@ -72,7 +89,7 @@ OvertoneVoice::OvertoneVoice(Config* config) : Voice(config) {
         factor = 13.0;
         break;
       case 14:
-        factor = two * 7.0;
+        factor = two * seven;
         break;
       case 15:
         factor = three * five;
@@ -93,7 +110,7 @@ OvertoneVoice::OvertoneVoice(Config* config) : Voice(config) {
         factor = two * two * five;
         break;
       case 21:
-        factor = three * 7.0;
+        factor = three * seven;
         break;
       case 22:
         factor = two * 11.0;
@@ -114,7 +131,7 @@ OvertoneVoice::OvertoneVoice(Config* config) : Voice(config) {
         factor = three * three * three;
         break;
       case 28: 
-        factor = two * two * 7.0;
+        factor = two * two * seven;
         break;
       case 29:
         factor = 29.0;

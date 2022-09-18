@@ -7,19 +7,6 @@
 Voice::Voice(Config* config) {
   value = 0.0;
 
-  if (!config->name_occurs("factor-two")) {
-    throw std::invalid_argument("Parameter factor-two not defined.");
-  }
-  this->two = config->get_float("factor-two");
-  if (!config->name_occurs("factor-three")) {
-    throw std::invalid_argument("Parameter factor-three not defined.");
-  }
-  this->three = config->get_float("factor-three");
-  if (!config->name_occurs("factor-five")) {
-    throw std::invalid_argument("Parameter factor-five not defined.");
-  }
-  this->five = config->get_float("factor-five");
-
 
   if (!config->name_occurs("attack")) {
     throw std::invalid_argument("Parameter attack not defined.");

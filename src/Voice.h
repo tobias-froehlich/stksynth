@@ -18,9 +18,6 @@ class Voice {
     int useVelocity;
     stk::StkFloat velocityExponent;
     stk::StkFloat velocityAmplitude;
-    stk::StkFloat two;
-    stk::StkFloat three;
-    stk::StkFloat five;
     stk::StkFloat value;
     void calculateFrequenciesEqual(Config* config);
     void interpolateKeyAmplitudes(std::vector<int> keyAmplitudesX,

@@ -13,6 +13,10 @@ class OvertoneVoice : public Voice {
     std::vector<stk::StkFloat> amplitudes;
     std::vector<stk::StkFloat> overtones;
     std::vector<stk::ADSR*> adsrs;
+    stk::StkFloat two;
+    stk::StkFloat three;
+    stk::StkFloat five;
+    stk::StkFloat seven;
   public:
     OvertoneVoice(Config* config);
     virtual ~OvertoneVoice();

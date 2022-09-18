@@ -23,6 +23,7 @@ velocity-exponent 1.0
 factor-two 2.00
 factor-three 3.00
 factor-five 5.00
+factor-seven 7.00
 
 key-amplitudes-x 24   72
 key-amplitudes-y 1.0  1.0
