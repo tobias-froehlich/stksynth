@@ -103,6 +103,26 @@ std::vector < int > utils::vector_str_to_int(
     return result;
 }
 
+int utils::stringIsFloat(std::string word) {
+  int numberOfPoints = 0;
+  for(char const &c : word) {
+    if (((c >= '0') && (c <= '9')) || (c == '.')) {
+      if (c == '.') {
+        numberOfPoints++;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+  if (numberOfPoints == 1) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
+
 utils::Color utils::vectorToColor(
         std::vector < int > vec) {
     if (vec.size() != 3) {

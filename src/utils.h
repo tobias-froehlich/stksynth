@@ -27,6 +27,8 @@ namespace utils {
   std::vector < int > vector_str_to_int(
     std::vector < std::string >);
 
+  int stringIsFloat(std::string word);
+
   struct Color {
     uint8_t red;
     uint8_t green;

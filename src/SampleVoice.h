@@ -8,9 +8,10 @@
 
 class SampleVoice : public Voice {
   private:
-    std::string sampleFileName;
-    stk::StkFloat sampleFrequency;
-    stk::FileWvIn* sampleFileData;
+    std::vector< stk::StkFloat > sampleFrequencies;
+    std::vector< stk::FileWvIn* > sampleFiles;
+    stk::FileWvIn* currentSampleFile;
+    std::vector< int > sampleIndexForKey;
   public:
     SampleVoice(Config* config);
     virtual ~SampleVoice();
