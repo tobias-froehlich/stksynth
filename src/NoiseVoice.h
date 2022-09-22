@@ -25,7 +25,7 @@ class NoiseVoice : public OvertoneVoice {
     void setBending(stk::StkFloat bending);
     void noteOn();
     void noteOff();
-    stk::StkFloat tick();
+    stk::StkFloat specificTick();
 };
 
 #endif

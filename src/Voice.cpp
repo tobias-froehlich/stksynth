@@ -1,6 +1,7 @@
 #include <math.h>
 #include <Stk.h>
 #include <ADSR.h>
+#include "LowpassFilter.h"
 #include "Voice.h"
 #include "const.h"
 
@@ -25,6 +26,15 @@ Voice::Voice(Config* config) {
   }
   stk::StkFloat release = config->get_float("release");
 
+  
+  if (!config->name_occurs("lowpass-frequencies")) {
+    throw std::invalid_argument("Parameter lowpass-frequencies not defined.");
+  }  
+  std::vector< stk::StkFloat > filterFrequencies = config->get_floats("lowpass-frequencies");
+  for(stk::StkFloat filterFrequency : filterFrequencies) {
+    lowpassFilters.push_back(new LowpassFilter(filterFrequency));
+  }
+
 
   if (!config->name_occurs("use-velocity")) {
     throw std::invalid_argument("Parameter use-velocity not defined.");
@@ -46,6 +56,8 @@ Voice::Voice(Config* config) {
       throw std::invalid_argument("Parameter velocity-exponent must be greater than zero.");
     }
   }
+
+  
 
   if (!config->name_occurs("key-amplitudes-x")) {
     throw std::invalid_argument("Parameter key-amplitudes-x not defined.");
@@ -82,7 +94,11 @@ Voice::Voice(Config* config) {
 }
 
 Voice::~Voice() {
+  std::cout << "Destroying voice.\n";
   delete adsr;
+  for(LowpassFilter* lowpassFilter : lowpassFilters) {
+    delete lowpassFilter;
+  }
 }
 
 void Voice::setMidicode(int midicode) {}
@@ -101,7 +117,18 @@ void Voice::noteOn() {}
 
 void Voice::noteOff() {}
 
-stk::StkFloat Voice::tick() {return 0.0;}
+stk::StkFloat Voice::tick() {
+  stk::StkFloat value = specificTick();
+  for(LowpassFilter* lowpassFilter : lowpassFilters) {
+    value = lowpassFilter->tick(value);
+  }
+  return value;
+}
+
+stk::StkFloat Voice::specificTick() {
+  return 0.0;
+}
+
 
 void Voice::calculateFrequenciesEqual(Config* config) {
   if (!config->name_occurs("reference-midi-key")) {

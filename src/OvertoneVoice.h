@@ -23,7 +23,7 @@ class OvertoneVoice : public Voice {
     virtual void setBending(stk::StkFloat bending);
     virtual void noteOn();
     virtual void noteOff();
-    virtual stk::StkFloat tick();
+    virtual stk::StkFloat specificTick();
 };
 
 #endif

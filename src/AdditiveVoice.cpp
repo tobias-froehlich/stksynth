@@ -40,7 +40,7 @@ void AdditiveVoice::noteOff() {
   adsr->keyOff();
 }
 
-stk::StkFloat AdditiveVoice::tick() {
+stk::StkFloat AdditiveVoice::specificTick() {
    stk::StkFloat value = 0.0;
    for(unsigned int i=0; i<nOvertones; i++) {
      phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];

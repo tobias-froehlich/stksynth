@@ -3,8 +3,8 @@ output-file-name /tmp/test
 reference-midi-key 57
 reference-frequency 220
 bending   2
-midi-channels 1 2 3 4 5 6 7 8
-overall-amplitude 10.0
+midi-channels 1 2 3 4 5 6 7 8 9 11 12 13 14 15 16
+overall-amplitude 5.0
 overtones               1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32
 overtone-falloff-power  1.0
 overtone-amplitudes     0.3 1  1    0.3 1   0.3 1   1   8 1   0.5 1   1   0.3 0.3 0.3 0.5 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3
@@ -23,6 +23,7 @@ velocity-exponent 1.0
 factor-two 2.00
 factor-three 3.00
 factor-five 5.00
+factor-seven 7.00
 
 key-amplitudes-x 24   72
 key-amplitudes-y 1.0  0.3
@@ -31,6 +32,8 @@ filter-resonance-frequency 100.01
 filter-resonance-radius    0.0
 filter-notch-frequency    00.01
 filter-notch-radius        0.0
+
+lowpass-frequencies 20000
 
 chorus-delay 100.0
 chorus-modulation-depth 0.01

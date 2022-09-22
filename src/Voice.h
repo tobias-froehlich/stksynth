@@ -4,6 +4,7 @@
 #include <ADSR.h>
 #include <Noise.h>
 #include <BiQuad.h>
+#include "LowpassFilter.h"
 #include "Config.h"
 
 class Voice {
@@ -15,6 +16,7 @@ class Voice {
     std::vector<stk::StkFloat> keyAmplitudes;
     stk::StkFloat amplitude = 1.0;
     stk::ADSR* adsr;
+    std::vector< LowpassFilter* > lowpassFilters;
     int useVelocity;
     stk::StkFloat velocityExponent;
     stk::StkFloat velocityAmplitude;
@@ -30,7 +32,8 @@ class Voice {
     virtual void setVelocity(int velocity);
     virtual void noteOn();
     virtual void noteOff();
-    virtual stk::StkFloat tick();
+    stk::StkFloat tick();
+    virtual stk::StkFloat specificTick();
 };
 
 #endif

@@ -3,6 +3,7 @@ add_executable(stksynth
   utils.cpp
   Config.cpp
   Synth.cpp
+  LowpassFilter.cpp
   Voice.cpp
   OvertoneVoice.cpp
   AdditiveVoice.cpp

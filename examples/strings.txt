@@ -28,6 +28,8 @@ factor-seven 7.00
 key-amplitudes-x 24   72
 key-amplitudes-y 1.0  1.0
 
+lowpass-frequencies 20000 20000
+
 filter-resonance-frequency 00.01
 filter-resonance-radius    0.9
 filter-notch-frequency    00.01

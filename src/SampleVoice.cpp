@@ -101,7 +101,7 @@ void SampleVoice::noteOff() {
   adsr->keyOff();
 }
 
-stk::StkFloat SampleVoice::tick() {
+stk::StkFloat SampleVoice::specificTick() {
     return currentSampleFile->tick() * adsr->tick() * amplitude * velocityAmplitude;
 //   stk::StkFloat value = 0.0;
 //   for(unsigned int i=0; i<nOvertones; i++) {

@@ -230,6 +230,6 @@ void OvertoneVoice::noteOn() {}
 
 void OvertoneVoice::noteOff() {}
 
-stk::StkFloat OvertoneVoice::tick() {return 0.0;}
+stk::StkFloat OvertoneVoice::specificTick() {return 0.0;}
 
 

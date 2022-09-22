@@ -74,7 +74,7 @@ void NoiseVoice::noteOff() {
   std::cout << maxBeforeFilter << " " << maxAfterFilter << "\n";
 }
 
-stk::StkFloat NoiseVoice::tick() {
+stk::StkFloat NoiseVoice::specificTick() {
 
    stk::StkFloat value = 0.0;
    for(unsigned int i=0; i<nOvertones; i++) {
