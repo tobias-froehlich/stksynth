@@ -7,7 +7,10 @@
 #include "SampleVoice.h"
 
 Synth::Synth(Config* config) {
+  init(config);
+}  
 
+void Synth::init(Config* config) {
   if (!config->name_occurs("midi-channels")) {
     throw std::invalid_argument("No midi-channels specified.");
   }
@@ -130,11 +133,22 @@ Synth::Synth(Config* config) {
 }
 
 Synth::~Synth() {
-  for(unsigned int i=0; i<nVoices; i++) {
-    delete voices[i];
+  destroy();
+}
+
+void Synth::destroy() {
+  while (voices.size() > 0) {
+    delete voices.back();
+    voices.pop_back();
   }
+  nVoices = 0;
   delete chorus;
   delete freeVerb;
+}
+
+void Synth::reload(Config* config) {
+  destroy();
+  init(config);
 }
 
 void Synth::setMidicode(int channel, int midicode) {

@@ -94,7 +94,6 @@ Voice::Voice(Config* config) {
 }
 
 Voice::~Voice() {
-  std::cout << "Destroying voice.\n";
   delete adsr;
   for(LowpassFilter* lowpassFilter : lowpassFilters) {
     delete lowpassFilter;

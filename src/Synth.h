@@ -26,7 +26,10 @@ class Synth {
         unsigned int getIndexFromChannel(int channel);
     public:
         Synth(Config* config);
+        void init(Config* config);
         ~Synth();
+        void destroy();
+        void reload(Config* config);
         void setMidicode(int channel, int midicode);
         void setVelocity(int channel, int velocity);
         void setBending(int channel, stk::StkFloat bending);

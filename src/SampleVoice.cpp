@@ -44,8 +44,6 @@ SampleVoice::SampleVoice(Config* config) : Voice(config) {
       throw std::invalid_argument(errorMessage);
     }
     float referenceFrequency = std::stof(parameters[1]);
-    std::cout << parameterName << " " << parameters[0] << " " << parameters[1] << "\n";
-    std::cout << referenceFrequency << "\n";
     int sampleFileNameAlreadyExists = 0;
     int sampleIndex = 0;
     for (unsigned int i = 0; i < sampleFileNames.size(); i++) {
@@ -69,7 +67,6 @@ SampleVoice::SampleVoice(Config* config) : Voice(config) {
     sampleFiles.push_back(sampleFile);
   }
   currentSampleFile = sampleFiles[0];
-  std::cout << "Number of different sample files: " << sampleFiles.size() << "\n";
 }
 
 SampleVoice::~SampleVoice() {

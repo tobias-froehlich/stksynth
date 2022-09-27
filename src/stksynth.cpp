@@ -68,21 +68,20 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
   while (*flag) {
     usleep(1000000);
     auto newWriteTime = std::filesystem::last_write_time(p);
-    // std::cout << (newWriteTime == lastWriteTime) << "\n";
     if (newWriteTime != lastWriteTime) {
       int recording = synth->isRecording();
       if (recording) {
         synth->stopRecording();
       }
       dac->stopStream();
-      delete synth;
       try {
         Config newConfig(configFilename);
-        synth = new Synth(&newConfig);
+        synth->reload(&newConfig);
         dac->startStream();
         config = newConfig;
       } catch (std::invalid_argument const&) {
-        synth = new Synth(&config);
+        std::cout << "Reload failed. Use old config.\n";
+        synth->reload(&config);
         dac->startStream();
       }
       if (recording) {
