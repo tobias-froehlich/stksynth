@@ -5,6 +5,7 @@
 #include "AdditiveVoice.h"
 #include "NoiseVoice.h"
 #include "SampleVoice.h"
+#include "SimpleSampleVoice.h"
 
 Synth::Synth(Config* config) {
   init(config);
@@ -125,6 +126,19 @@ void Synth::init(Config* config) {
   } else if (voiceType.compare("SAMPLE") == 0) {
     for (unsigned int i=0; i<nVoices; i++) {
       voices.push_back(new SampleVoice(config));
+    }
+  } else if (voiceType.compare("SIMPLESAMPLE") == 0) {
+    if (!config->name_occurs("sample-file")) {
+      throw std::invalid_argument("Parameter sample-file not defined.");
+    }
+    std::string sampleFileName = config->get_string("sample-file");
+    if (!config->name_occurs("sample-reference-frequency")) {
+      throw std::invalid_argument("Parameter sample-reference-frequency not defined.");
+    }
+    stk::StkFloat sampleReferenceFrequency = config->get_float("sample-reference-frequency");
+    sampler.readSampleFile(sampleFileName, sampleReferenceFrequency);
+    for (unsigned int i=0; i<nVoices; i++) {
+      voices.push_back(new SimpleSampleVoice(config, &sampler));
     }
   } else {
     throw std::invalid_argument("Parameter voice-type has an unknown value.");

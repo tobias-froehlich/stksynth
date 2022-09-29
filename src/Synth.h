@@ -8,6 +8,7 @@
 #include <Chorus.h>
 #include <FreeVerb.h>
 #include "Config.h"
+#include "Sampler.h"
 #include "Voice.h"
 
 class Synth {
@@ -24,6 +25,7 @@ class Synth {
         stk::Chorus* chorus;
         stk::FreeVerb* freeVerb;
         unsigned int getIndexFromChannel(int channel);
+        Sampler sampler;
     public:
         Synth(Config* config);
         void init(Config* config);

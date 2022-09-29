@@ -7,18 +7,6 @@
 #include "utils.h"
 
 SampleVoice::SampleVoice(Config* config) : Voice(config) {
-//  if (!config->name_occurs("sample-file-name")) {
-//    throw std::invalid_argument("Parameter sample-file-name not defined");
-//  }
-//  this->sampleFileName = config->get_string("sample-file-name");
-//
-//  if (!config->name_occurs("sample-frequency")) {
-//    throw std::invalid_argument("Parameter sample-frequency not defined");
-//  }
-//  this->sampleFrequency = config->get_float("sample-frequency");
-//
-//  this->sampleFileData = new stk::FileWvIn();
-//  this->sampleFileData->openFile(this->sampleFileName);
   std::vector < std::string > sampleFileNames;
   for(int key = 0; key < 128; key++) {
     std::string parameterName = "sample_key_";

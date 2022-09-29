@@ -8,5 +8,7 @@ add_executable(stksynth
   OvertoneVoice.cpp
   AdditiveVoice.cpp
   NoiseVoice.cpp
-  SampleVoice.cpp  
+  SampleVoice.cpp
+  SimpleSampleVoice.cpp
+  Sampler.cpp
 )
