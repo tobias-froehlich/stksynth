@@ -164,7 +164,9 @@ void Synth::destroy() {
   }
   nVoices = 0;
   delete chorus;
+  chorus = 0;
   delete freeVerb;
+  freeVerb = 0;
 }
 
 void Synth::reload(Config* config) {

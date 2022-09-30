@@ -64,9 +64,11 @@ void task_user_input(int* flag, std::string configFilename, RtAudio* dac, Synth*
   std::cout << "Quit stksynth.\n";
 }
 
-void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth* synth, Config config) {
+void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth* synth) {
   fs::path p = configFilename;
   auto lastWriteTime = std::filesystem::last_write_time(p);
+  Config* config = new Config(configFilename);
+  Config* newConfig = config;
   while (*flag) {
     usleep(1000000);
     auto newWriteTime = std::filesystem::last_write_time(p);
@@ -77,13 +79,14 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
       }
       dac->stopStream();
       try {
-        Config newConfig(configFilename);
-        synth->reload(&newConfig);
+        newConfig = new Config(configFilename);
+        synth->reload(newConfig);
         dac->startStream();
+        delete config;
         config = newConfig;
       } catch (std::invalid_argument const&) {
         std::cout << "Reload failed. Use old config.\n";
-        synth->reload(&config);
+        synth->reload(config);
         dac->startStream();
       }
       if (recording) {
@@ -92,6 +95,7 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
     } 
     lastWriteTime = newWriteTime;
   }
+  delete newConfig;
 }
 
 void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
@@ -197,7 +201,7 @@ int main(int argc, char** argv)
   int flag = 1;
 
   std::thread thread_user_input(task_user_input, &flag, configFilename, dac, synth);
-  std::thread thread_watch_file(task_watch_file, &flag, configFilename, dac, synth, config);
+  std::thread thread_watch_file(task_watch_file, &flag, configFilename, dac, synth);
   std::thread thread_midi_buisiness(task_midi_buisiness, &flag, midiin, synth);
   thread_midi_buisiness.join();
   thread_watch_file.join();
