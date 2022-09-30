@@ -21,7 +21,7 @@ void SimpleSampleVoice::setMidicode(int midicode) {
   sampleIndex = sampler->getSampleIndex(frequency);
   std::cout << "sampleIndex: " << sampleIndex << "\n";
   stk::StkFloat referenceFrequency = sampler->getReferenceFrequency(frequency);
-  stepSize = sampler->getFileRate() / 44100.0 * frequency / referenceFrequency;
+  stepSize = sampler->getFileRate() / sampleRate * frequency / referenceFrequency;
 }
 
 void SimpleSampleVoice::setBending(stk::StkFloat bending) {

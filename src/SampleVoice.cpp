@@ -68,7 +68,7 @@ void SampleVoice::setMidicode(int midicode) {
   this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
   int sampleIndex = sampleIndexForKey[midicode];
   currentSampleFile = sampleFiles[sampleIndex];
-  currentSampleFile->setRate(currentSampleFile->getFileRate() / 44100.0 * frequency / sampleFrequencies[midicode]);
+  currentSampleFile->setRate(currentSampleFile->getFileRate() / sampleRate * frequency / sampleFrequencies[midicode]);
   std::cout << "frequency: " << frequency << ", sample frequency: " << sampleFrequencies[sampleIndex] << "\n";
   amplitude = keyAmplitudes[midicode];
 }
@@ -88,14 +88,5 @@ void SampleVoice::noteOff() {
 
 stk::StkFloat SampleVoice::specificTick() {
     return currentSampleFile->tick() * adsr->tick() * amplitude * velocityAmplitude;
-//   stk::StkFloat value = 0.0;
-//   for(unsigned int i=0; i<nOvertones; i++) {
-//     phases[i] += cTwoPi / 44100.0 * frequency * overtones[i];
-//     if (phases[i] >= cTwoPi) {
-//       phases[i] -= cTwoPi;
-//     }
-//     value += sin(phases[i]) * adsrs[i]->tick() * amplitudes[i];
-//   }
-//   return value * amplitude;
 }
 

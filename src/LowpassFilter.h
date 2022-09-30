@@ -10,7 +10,7 @@ class LowpassFilter {
         stk::StkFloat outputValue = 0.0;
 
     public:
-        LowpassFilter(stk::StkFloat filterFrequency);
+        LowpassFilter(stk::StkFloat sampleRate, stk::StkFloat filterFrequency);
         ~LowpassFilter();
 
         stk::StkFloat tick(stk::StkFloat inputValue);

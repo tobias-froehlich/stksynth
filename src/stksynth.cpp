@@ -153,7 +153,11 @@ int main(int argc, char** argv)
   }
 
   // Set the global sample rate before creating class instances.
-  Stk::setSampleRate( 44100.0 );
+  if (!config.name_occurs("sample-rate")) {
+    throw std::invalid_argument("Parameter sample-rate not defined.");
+  }
+  unsigned int sampleRate = config.get_int("sample-rate");
+  Stk::setSampleRate( sampleRate );
   std::cout << "STK sample rate: " << Stk::sampleRate() << "\n";
   RtAudio* dac = new RtAudio();
   RtMidiIn* midiin;
@@ -168,7 +172,7 @@ int main(int argc, char** argv)
   unsigned int bufferFrames = RT_BUFFER_SIZE;
   Synth* synth = new Synth(&config);
   try {
-    dac->openStream( &parameters, NULL, format, (unsigned int)Stk::sampleRate(), &bufferFrames, &tick, (void*) synth );
+    dac->openStream( &parameters, NULL, format, sampleRate, &bufferFrames, &tick, (void*) synth );
     printAudioDetails(dac);
   }
   catch ( RtAudioError &error ) {

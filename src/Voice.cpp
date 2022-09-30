@@ -8,6 +8,10 @@
 Voice::Voice(Config* config) {
   value = 0.0;
 
+  if (!config->name_occurs("sample-rate")) {
+    throw std::invalid_argument("Parameter sample-rate not defined");
+  }
+  sampleRate = (stk::StkFloat)config->get_int("sample-rate");
 
   if (!config->name_occurs("attack")) {
     throw std::invalid_argument("Parameter attack not defined.");
@@ -32,7 +36,7 @@ Voice::Voice(Config* config) {
   }  
   std::vector< stk::StkFloat > filterFrequencies = config->get_floats("lowpass-frequencies");
   for(stk::StkFloat filterFrequency : filterFrequencies) {
-    lowpassFilters.push_back(new LowpassFilter(filterFrequency));
+    lowpassFilters.push_back(new LowpassFilter(sampleRate, filterFrequency));
   }
 
 

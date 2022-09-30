@@ -1,7 +1,7 @@
 #include "LowpassFilter.h"
 
-LowpassFilter::LowpassFilter(stk::StkFloat filterFrequency) {
-  filterFactor = filterFrequency / 44100.0;
+LowpassFilter::LowpassFilter(stk::StkFloat sampleRate, stk::StkFloat filterFrequency) {
+  filterFactor = filterFrequency / sampleRate;
 }
 
 LowpassFilter::~LowpassFilter() {

@@ -9,6 +9,7 @@
 
 class Voice {
   protected:
+    stk::StkFloat sampleRate;
     stk::StkFloat frequency = 440.0;
     std::vector<stk::StkFloat> frequenciesEqual;
     stk::StkFloat bending = 0.0;
