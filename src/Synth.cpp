@@ -54,6 +54,13 @@ void Synth::init(Config* config) {
 
 
   filter = new stk::BiQuad();
+  if (!config->name_occurs("filter-resonance-mix")) {
+    throw std::invalid_argument("Parameter filter-resonance-mix not defined.");
+  }
+  filterResonanceMix = config->get_float("filter-resonance-mix");
+  if ((filterResonanceMix < 0.0) || (filterResonanceMix > 1.0)) {
+    throw std::invalid_argument("Parameter filter-resonance-mix is smaller than 0.0 or greater than 1.0 .");
+  }
   if (!config->name_occurs("filter-resonance-frequency")) {
     throw std::invalid_argument("Parameter filter-resonance-frequency not defined.");
   }
@@ -242,7 +249,7 @@ stk::StkFloat Synth::tick() {
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
   for(unsigned int i=0; i<nBufferSize; i++) {
     stk::StkFloat value = tick();
-//    value = filter->tick(value);   
+    value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);   
     stk::StkFloat valueLeft = chorus->tick(value, 0);
     stk::StkFloat valueRight = chorus->lastOut(1);
 

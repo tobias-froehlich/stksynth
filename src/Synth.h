@@ -21,6 +21,7 @@ class Synth {
         std::string outputFileName;
         stk::FileWvOut* outputFile;
         int recording = 0;
+        stk::StkFloat filterResonanceMix;
         stk::BiQuad* filter;
         stk::Chorus* chorus;
         stk::FreeVerb* freeVerb;
