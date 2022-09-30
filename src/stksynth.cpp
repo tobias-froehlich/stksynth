@@ -29,6 +29,22 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   return 0;
 }
 
+void printAudioDetails(RtAudio* dac) {
+  int nDevices = dac->getDeviceCount();
+  std::cout << "The following devices were available:\n";
+  for (int i = 0; i < nDevices; i++) {
+    RtAudio::DeviceInfo deviceInfo = dac->getDeviceInfo(i);
+    std::cout << "  device " << i << ": " << deviceInfo.name << "\n";
+    std::cout << "    supported sample rates: ";
+    for(unsigned int sampleRate : deviceInfo.sampleRates) {
+      std::cout << sampleRate << " ";
+    }
+    std::cout << "\n";
+    std::cout << "    preferred sample rate: " << deviceInfo.preferredSampleRate << "\n";
+  }
+  std::cout << "Sample rate of the device: " << dac->getStreamSampleRate() << "\n";
+}
+
 void task_user_input(int* flag, std::string configFilename, RtAudio* dac, Synth* synth) {
   std::string text;
   while (*flag) {
@@ -43,20 +59,6 @@ void task_user_input(int* flag, std::string configFilename, RtAudio* dac, Synth*
     }
     if (text.compare("stop") == 0) {
       synth->stopRecording();
-    }
-    if (text.compare("refresh") == 0) {
-      int recording = synth->isRecording();
-      if (recording) {
-        synth->stopRecording();
-      }
-      dac->stopStream();
-      delete synth;
-      Config* config = new Config(configFilename);
-      synth = new Synth(config);
-      dac->startStream();
-      if (recording) {
-        synth->startRecording();
-      }
     }
   }
   std::cout << "Quit stksynth.\n";
@@ -133,15 +135,6 @@ void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
   }
 }
 
-void printAudioDetails(RtAudio* dac) {
-  int nDevices = dac->getDeviceCount();
-  std::cout << "The following devices were available:\n";
-  for (int i = 0; i < nDevices; i++) {
-    RtAudio::DeviceInfo deviceInfo = dac->getDeviceInfo(i);
-    std::cout << "  device " << i << ": " << deviceInfo.name << "\n";
-  }
-  std::cout << "Sample rate of the device: " << dac->getStreamSampleRate() << "\n";
-}
 
 int main(int argc, char** argv)
 {

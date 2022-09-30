@@ -19,6 +19,7 @@ void SimpleSampleVoice::setMidicode(int midicode) {
   this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);  
   amplitude = keyAmplitudes[midicode];
   sampleIndex = sampler->getSampleIndex(frequency);
+  std::cout << "sampleIndex: " << sampleIndex << "\n";
   stk::StkFloat referenceFrequency = sampler->getReferenceFrequency(frequency);
   stepSize = sampler->getFileRate() / 44100.0 * frequency / referenceFrequency;
 }

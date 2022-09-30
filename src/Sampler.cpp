@@ -12,6 +12,9 @@ Sampler::~Sampler() {
 }
 
 void Sampler::readSampleFile(std::string sampleFileName, stk::StkFloat referenceFrequency) {
+  sampleData.clear();
+  referenceFrequencies.clear();
+
   stk::FileWvIn sampleFile;
   sampleFile.openFile(sampleFileName);
   fileRate = sampleFile.getFileRate();
@@ -42,6 +45,11 @@ stk::StkFloat Sampler::getFileRate() {
 }
 
 int Sampler::getSampleIndex(stk::StkFloat frequency) {
+  std::cout << "find " << frequency << " in ";
+  for(stk::StkFloat frequency : referenceFrequencies) {
+    std::cout << frequency << " ";
+  }
+  std::cout << "\n";
   if (frequency < referenceFrequencies[1]) {
     return 0;
   }

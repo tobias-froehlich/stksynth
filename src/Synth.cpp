@@ -240,25 +240,25 @@ stk::StkFloat Synth::tick() {
 }
 
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
-    for(unsigned int i=0; i<nBufferSize; i++) {
-      stk::StkFloat value = tick();
-      value = filter->tick(value);   
-      stk::StkFloat valueLeft = chorus->tick(value, 0);
-      stk::StkFloat valueRight = chorus->lastOut(1);
+  for(unsigned int i=0; i<nBufferSize; i++) {
+    stk::StkFloat value = tick();
+//    value = filter->tick(value);   
+    stk::StkFloat valueLeft = chorus->tick(value, 0);
+    stk::StkFloat valueRight = chorus->lastOut(1);
 
-      valueLeft = freeVerb->tick(valueLeft, valueRight, 0);
-      valueRight = freeVerb->lastOut(1);
+    valueLeft = freeVerb->tick(valueLeft, valueRight, 0);
+    valueRight = freeVerb->lastOut(1);
 
-      *samples++ = valueLeft;
-      *samples++ = valueRight;;
+    *samples++ = valueLeft;
+    *samples++ = valueRight;;
 
     if (recording) {
-        stk::StkFrames* frames = new stk::StkFrames(1, 2);
-        (*frames)[0] = valueLeft;
-        (*frames)[1] = valueRight;
-        outputFile->tick(*frames);
-      }      
-    }
+      stk::StkFrames* frames = new stk::StkFrames(1, 2);
+      (*frames)[0] = valueLeft;
+      (*frames)[1] = valueRight;
+      outputFile->tick(*frames);
+    }      
+  }
 }
 
 unsigned int Synth::getIndexFromChannel(int channel) {
