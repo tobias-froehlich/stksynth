@@ -8,10 +8,14 @@
 #include "SimpleSampleVoice.h"
 
 Synth::Synth(Config* config) {
+
+  filter = new stk::BiQuad();
+  freeVerb = new stk::FreeVerb();
   init(config);
 }  
 
 void Synth::init(Config* config) {
+  std::cout << "init synth: " << freeVerb << "\n";
   if (!config->name_occurs("midi-channels")) {
     throw std::invalid_argument("No midi-channels specified.");
   }
@@ -53,7 +57,6 @@ void Synth::init(Config* config) {
   std::cout << "Recording will be written to file starting with \"" << outputFileName << "\".\n";
 
 
-  filter = new stk::BiQuad();
   if (!config->name_occurs("filter-resonance-mix")) {
     throw std::invalid_argument("Parameter filter-resonance-mix not defined.");
   }
@@ -98,7 +101,6 @@ void Synth::init(Config* config) {
   chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
   
-  freeVerb = new stk::FreeVerb();
   if (!config->name_occurs("free-verb-mix")) {
     throw std::invalid_argument("Parameter free-verb-mix not defined.");
   }
@@ -155,6 +157,8 @@ void Synth::init(Config* config) {
 
 Synth::~Synth() {
   destroy();
+  delete filter;
+  delete freeVerb;
 }
 
 void Synth::destroy() {
@@ -165,8 +169,6 @@ void Synth::destroy() {
   nVoices = 0;
   delete chorus;
   chorus = 0;
-  delete freeVerb;
-  freeVerb = 0;
 }
 
 void Synth::reload(Config* config) {

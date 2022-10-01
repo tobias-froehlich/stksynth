@@ -13,6 +13,7 @@ SimpleSampleVoice::SimpleSampleVoice(Config* config, Sampler* sampler) : Voice(c
 }
 
 SimpleSampleVoice::~SimpleSampleVoice() {
+  std::cout << "destroy voice.\n";
 }
 
 void SimpleSampleVoice::setMidicode(int midicode) {

@@ -121,6 +121,9 @@ void Voice::noteOn() {}
 void Voice::noteOff() {}
 
 stk::StkFloat Voice::tick() {
+  if (adsr->getState() == stk::ADSR::IDLE) {
+    return 0.0;
+  }
   stk::StkFloat value = specificTick();
   for(LowpassFilter* lowpassFilter : lowpassFilters) {
     value = lowpassFilter->tick(value);
