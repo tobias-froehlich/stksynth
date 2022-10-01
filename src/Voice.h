@@ -12,6 +12,7 @@ class Voice {
     stk::StkFloat sampleRate;
     stk::StkFloat frequency = 440.0;
     std::vector<stk::StkFloat> frequenciesEqual;
+    stk::StkFloat maxBending = 0.0;
     stk::StkFloat bending = 0.0;
     std::vector<stk::StkFloat> amplitudes;
     std::vector<stk::StkFloat> keyAmplitudes;
@@ -28,9 +29,10 @@ class Voice {
   public:
     Voice(Config* config);
     virtual ~Voice();
-    virtual void setMidicode(int midicode);
-    virtual void setBending(stk::StkFloat bending);
-    virtual void setVelocity(int velocity);
+    void setMidicode(int midicode);
+    virtual void specificSetMidicode(int midicode);
+    void setBending(stk::StkFloat bending);
+    void setVelocity(int velocity);
     virtual void noteOn();
     virtual void noteOff();
     stk::StkFloat tick();

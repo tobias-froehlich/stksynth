@@ -14,12 +14,7 @@ AdditiveVoice::AdditiveVoice(Config* config) : OvertoneVoice(config) {
 AdditiveVoice::~AdditiveVoice() {
 }
 
-void AdditiveVoice::setMidicode(int midicode) {
-  std::cout << "additive voice set midi code\n";
-  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
-  std::cout << "frequency set\n";
-  amplitude = keyAmplitudes[midicode];
-  std::cout << "keyAmplitudes set\n";
+void AdditiveVoice::specificSetMidicode(int midicode) {
 }
 
 void AdditiveVoice::setBending(stk::StkFloat bending) {

@@ -9,9 +9,14 @@ Voice::Voice(Config* config) {
   value = 0.0;
 
   if (!config->name_occurs("sample-rate")) {
-    throw std::invalid_argument("Parameter sample-rate not defined");
+    throw std::invalid_argument("Parameter sample-rate not defined.");
   }
   sampleRate = (stk::StkFloat)config->get_int("sample-rate");
+
+  if (!config->name_occurs("bending")) {
+    throw std::invalid_argument("Parameter bending not defined.");
+  }
+  maxBending = config->get_float("bending");
 
   if (!config->name_occurs("attack")) {
     throw std::invalid_argument("Parameter attack not defined.");
@@ -104,9 +109,20 @@ Voice::~Voice() {
   }
 }
 
-void Voice::setMidicode(int midicode) {}
+void Voice::setMidicode(int midicode) {
+  frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending * maxBending);
+  std::cout << "frequency: " << frequency << "\n";
+  amplitude = keyAmplitudes[midicode];
+  specificSetMidicode(midicode);
+}
 
-void Voice::setBending(stk::StkFloat bending) {}
+void Voice::specificSetMidicode(int midicode) {
+}
+
+void Voice::setBending(stk::StkFloat bending) {
+  std::cout << "bending: " << bending << "\n";
+  this->bending = bending;
+}
 
 void Voice::setVelocity(int velocity) {
   if (useVelocity) {

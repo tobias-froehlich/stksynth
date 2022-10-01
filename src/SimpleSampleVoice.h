@@ -15,7 +15,7 @@ class SimpleSampleVoice : public Voice {
   public:
     SimpleSampleVoice(Config* config, Sampler* sampler);
     virtual ~SimpleSampleVoice();
-    void setMidicode(int midicode);
+    void specificSetMidicode(int midicode);
     void setBending(stk::StkFloat bending);
     void noteOn();
     void noteOff();

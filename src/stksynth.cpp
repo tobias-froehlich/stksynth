@@ -132,7 +132,7 @@ void task_midi_buisiness(int* flag, RtMidiIn* midiin, Synth* synth) {
       }
       if ((message[0] >= 224) && (message[0] < 224 + 16)) {
           int channel = message[0] - 224;
-          stk::StkFloat bending = (stk::StkFloat)(((int)message[2]) * 127 + message[1] - 8192) / 8192.0;
+          stk::StkFloat bending = (stk::StkFloat)(((int)message[2]) * 128 + message[1] - 8192) / 16384.0;
           synth->setBending(channel, bending);
       }
     }

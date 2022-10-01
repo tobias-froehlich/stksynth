@@ -16,17 +16,11 @@ SimpleSampleVoice::~SimpleSampleVoice() {
   std::cout << "destroy voice.\n";
 }
 
-void SimpleSampleVoice::setMidicode(int midicode) {
-  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);  
-  amplitude = keyAmplitudes[midicode];
+void SimpleSampleVoice::specificSetMidicode(int midicode) {
   sampleIndex = sampler->getSampleIndex(frequency);
   std::cout << "sampleIndex: " << sampleIndex << "\n";
   stk::StkFloat referenceFrequency = sampler->getReferenceFrequency(frequency);
   stepSize = sampler->getFileRate() / sampleRate * frequency / referenceFrequency;
-}
-
-void SimpleSampleVoice::setBending(stk::StkFloat bending) {
-  this->bending = bending;
 }
 
 void SimpleSampleVoice::noteOn() {

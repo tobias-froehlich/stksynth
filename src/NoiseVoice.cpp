@@ -37,15 +37,13 @@ NoiseVoice::~NoiseVoice() {
   }
 }
 
-void NoiseVoice::setMidicode(int midicode) {
-  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
+void NoiseVoice::specificSetMidicode(int midicode) {
   for(unsigned int i=0; i<nOvertones; i++) {
     for(unsigned int j=0; j<nFilters; j++) {
       std::cout << overtones[i] << " ";
       filters[i][j]->setResonance(frequency * overtones[i], 1.0 - pow(10.0, -frequencySharpness), false);
     }
   }
-  amplitude = keyAmplitudes[midicode];// * pow(10.0, -frequencySharpness*0.3/nFilters);
 
   factor[0] = pow(5, -frequencySharpness*pow(440.0/frequency, 0.15));
   factor[1] = pow(10, -frequencySharpness*pow(440.0/frequency, 0.15));

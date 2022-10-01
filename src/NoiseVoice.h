@@ -21,7 +21,7 @@ class NoiseVoice : public OvertoneVoice {
   public:
     NoiseVoice(Config* config);
     virtual ~NoiseVoice();
-    void setMidicode(int midicode);
+    void specificSetMidicode(int midicode);
     void setBending(stk::StkFloat bending);
     void noteOn();
     void noteOff();

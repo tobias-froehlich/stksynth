@@ -64,13 +64,11 @@ SampleVoice::~SampleVoice() {
   }
 }
 
-void SampleVoice::setMidicode(int midicode) {
-  this->frequency = frequenciesEqual[midicode] * std::pow(cTwelfthRootOfTwo, bending);
+void SampleVoice::specificSetMidicode(int midicode) {
   int sampleIndex = sampleIndexForKey[midicode];
   currentSampleFile = sampleFiles[sampleIndex];
   currentSampleFile->setRate(currentSampleFile->getFileRate() / sampleRate * frequency / sampleFrequencies[midicode]);
   std::cout << "frequency: " << frequency << ", sample frequency: " << sampleFrequencies[sampleIndex] << "\n";
-  amplitude = keyAmplitudes[midicode];
 }
 
 void SampleVoice::setBending(stk::StkFloat bending) {

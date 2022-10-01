@@ -11,7 +11,7 @@ class AdditiveVoice : public OvertoneVoice {
   public:
     AdditiveVoice(Config* config);
     virtual ~AdditiveVoice();
-    void setMidicode(int midicode);
+    void specificSetMidicode(int midicode);
     void setBending(stk::StkFloat bending);
     void noteOn();
     void noteOff();
