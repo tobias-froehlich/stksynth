@@ -47,10 +47,17 @@ SampleVoice::SampleVoice(Config* config) : Voice(config) {
     sampleIndexForKey.push_back(sampleIndex);
     sampleFrequencies.push_back(referenceFrequency);
   }
-
+  if (!config->name_occurs("sample-directory")) {
+    throw std::invalid_argument("Parameter sample-directory not defined.");
+  }
+  std::string sampleDirectory = config->get_string("sample-directory");
   for (std::string sampleFileName : sampleFileNames) {
     stk::FileWvIn* sampleFile = new stk::FileWvIn;
-    sampleFile->openFile(sampleFileName);
+    std::string fullFileName = "";
+    fullFileName.append(sampleDirectory);
+    fullFileName.append("/");
+    fullFileName.append(sampleFileName);
+    sampleFile->openFile(fullFileName);
     sampleFile->setInterpolate(true);
     sampleFiles.push_back(sampleFile);
   }
