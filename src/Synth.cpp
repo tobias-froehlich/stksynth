@@ -7,11 +7,13 @@
 #include "SampleVoice.h"
 #include "SimpleSampleVoice.h"
 #include "ReverberatorFreeVerb.h"
+#include "ReverberatorJCRev.h"
+#include "ReverberatorNRev.h"
+#include "ReverberatorPRCRev.h"
 
 Synth::Synth(Config* config) {
 
   filter = new stk::BiQuad();
-  reverberator = new ReverberatorFreeVerb(config);
   init(config);
 }  
 
@@ -100,6 +102,7 @@ void Synth::init(Config* config) {
   }
   chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
+
   
   std::cout << "nVoices = " << nVoices << "\n";
 
@@ -135,6 +138,26 @@ void Synth::init(Config* config) {
   } else {
     throw std::invalid_argument("Parameter voice-type has an unknown value.");
   }
+
+  if (!config->name_occurs("reverb-algorithm")) {
+    throw std::invalid_argument("Parameter reverb-algorithm not defined.");
+  }
+  if (config->get_string("reverb-algorithm").compare("FREE_VERB") == 0) {
+    reverberator = new ReverberatorFreeVerb(config);
+  }
+  else if (config->get_string("reverb-algorithm").compare("JC_REV") == 0) {
+    reverberator = new ReverberatorJCRev(config);
+  }
+  else if (config->get_string("reverb-algorithm").compare("N_REV") == 0) {
+    reverberator = new ReverberatorNRev(config);
+  }
+  else if (config->get_string("reverb-algorithm").compare("PRC_REV") == 0) {
+    reverberator = new ReverberatorPRCRev(config);
+  }
+  else {
+    throw std::invalid_argument("Reverb algorithm is not supported.");
+  }
+
 
 }
 

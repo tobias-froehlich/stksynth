@@ -13,4 +13,7 @@ add_executable(stksynth
   Sampler.cpp
   AbstractReverberator.cpp
   ReverberatorFreeVerb.cpp
+  ReverberatorJCRev.cpp
+  ReverberatorNRev.cpp
+  ReverberatorPRCRev.cpp
 )
