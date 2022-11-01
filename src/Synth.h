@@ -6,7 +6,7 @@
 #include <FileWvOut.h>
 #include <BiQuad.h>
 #include <Chorus.h>
-#include <FreeVerb.h>
+#include "AbstractReverberator.h"
 #include "Config.h"
 #include "Sampler.h"
 #include "Voice.h"
@@ -24,7 +24,7 @@ class Synth {
         stk::StkFloat filterResonanceMix;
         stk::BiQuad* filter;
         stk::Chorus* chorus;
-        stk::FreeVerb* freeVerb;
+        AbstractReverberator* reverberator;
         unsigned int getIndexFromChannel(int channel);
         Sampler sampler;
     public:

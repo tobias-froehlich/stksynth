@@ -11,4 +11,6 @@ add_executable(stksynth
   SampleVoice.cpp
   SimpleSampleVoice.cpp
   Sampler.cpp
+  AbstractReverberator.cpp
+  ReverberatorFreeVerb.cpp
 )

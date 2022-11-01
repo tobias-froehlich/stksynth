@@ -6,16 +6,16 @@
 #include "NoiseVoice.h"
 #include "SampleVoice.h"
 #include "SimpleSampleVoice.h"
+#include "ReverberatorFreeVerb.h"
 
 Synth::Synth(Config* config) {
 
   filter = new stk::BiQuad();
-  freeVerb = new stk::FreeVerb();
+  reverberator = new ReverberatorFreeVerb(config);
   init(config);
 }  
 
 void Synth::init(Config* config) {
-  std::cout << "init synth: " << freeVerb << "\n";
   if (!config->name_occurs("midi-channels")) {
     throw std::invalid_argument("No midi-channels specified.");
   }
@@ -101,23 +101,6 @@ void Synth::init(Config* config) {
   chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
   
-  if (!config->name_occurs("free-verb-mix")) {
-    throw std::invalid_argument("Parameter free-verb-mix not defined.");
-  }
-  freeVerb->setEffectMix(config->get_float("free-verb-mix"));
-  if (!config->name_occurs("free-verb-room-size")) {
-    throw std::invalid_argument("Parameter free-verb-room-size not defined.");
-  }
-  freeVerb->setRoomSize(config->get_float("free-verb-room-size"));
-  if (!config->name_occurs("free-verb-damping")) {
-    throw std::invalid_argument("Parameter free-verb-damping not defined.");
-  }
-  freeVerb->setDamping(config->get_float("free-verb-damping"));
-  if (!config->name_occurs("free-verb-width")) {
-    throw std::invalid_argument("Parameter free-verb-width not defined.");
-  }
-  freeVerb->setWidth(config->get_float("free-verb-width"));
-
   std::cout << "nVoices = " << nVoices << "\n";
 
   if (!config->name_occurs("voice-type")) {
@@ -158,7 +141,7 @@ void Synth::init(Config* config) {
 Synth::~Synth() {
   destroy();
   delete filter;
-  delete freeVerb;
+  delete reverberator;
 }
 
 void Synth::destroy() {
@@ -257,8 +240,8 @@ void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nB
     stk::StkFloat valueLeft = chorus->tick(value, 0);
     stk::StkFloat valueRight = chorus->lastOut(1);
 
-    valueLeft = freeVerb->tick(valueLeft, valueRight, 0);
-    valueRight = freeVerb->lastOut(1);
+    valueLeft = reverberator->tick(valueLeft, valueRight, 0);
+    valueRight = reverberator->lastOut(1);
 
     *samples++ = valueLeft;
     *samples++ = valueRight;;
