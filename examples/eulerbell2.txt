@@ -1,0 +1,41 @@
+device-id 0
+sample-rate 44100
+output-file-name /tmp/test
+reference-midi-key 57
+reference-frequency 220
+bending   2
+midi-channels 1 2 3 4 5 6 7 8 9 11 12 13 14 15 16
+overall-amplitude 32.0
+
+attack 0.1
+decay 0.7
+sustain 0.3
+release 0.4
+
+use-velocity true
+velocity-exponent 1.5
+
+key-amplitudes-x 24   72
+key-amplitudes-y 1.0  0.3
+
+filter-resonance-mix 0.0
+filter-resonance-frequency 100.0
+filter-resonance-radius    0.3
+filter-notch-frequency    1000.0
+filter-notch-radius        0.1
+
+lowpass-frequencies 19000 19000 18000 18000
+
+chorus-delay 0.5
+chorus-modulation-depth 0.00
+chorus-modulation-frequency 0.2
+
+reverb-algorithm FREE_VERB
+free-verb-mix 0.8
+free-verb-room-size 0.5
+free-verb-damping 0.01
+free-verb-width 0.8
+
+voice-type SIMPLESAMPLE
+sample-file ../../sound-designer/eulerbell_1.97_2.96_4.84_6.70.wav
+sample-reference-frequency 220.0
