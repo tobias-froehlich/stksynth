@@ -267,8 +267,8 @@ void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nB
     if (!isLoading) {
       stk::StkFloat value = tick();
       value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);   
-      stk::StkFloat valueLeft = chorus->tick(value, 0);
-      stk::StkFloat valueRight = chorus->lastOut(1);
+      valueLeft = chorus->tick(value, 0);
+      valueRight = chorus->lastOut(1);
 
       valueLeft = reverberator->tick(valueLeft, valueRight, 0);
       valueRight = reverberator->lastOut(1);
