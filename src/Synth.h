@@ -27,6 +27,7 @@ class Synth {
         AbstractReverberator* reverberator;
         unsigned int getIndexFromChannel(int channel);
         Sampler sampler;
+        int isLoading;
     public:
         Synth(Config* config);
         void init(Config* config);

@@ -77,17 +77,14 @@ void task_watch_file(int* flag, std::string configFilename, RtAudio* dac, Synth*
       if (recording) {
         synth->stopRecording();
       }
-      dac->stopStream();
       try {
         newConfig = new Config(configFilename);
         synth->reload(newConfig);
-        dac->startStream();
         delete config;
         config = newConfig;
       } catch (std::invalid_argument const&) {
         std::cout << "Reload failed. Use old config.\n";
         synth->reload(config);
-        dac->startStream();
       }
       if (recording) {
         synth->startRecording();

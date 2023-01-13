@@ -12,7 +12,7 @@
 #include "ReverberatorPRCRev.h"
 
 Synth::Synth(Config* config) {
-
+  isLoading = 1;
   filter = new stk::BiQuad();
   init(config);
 }  
@@ -157,14 +157,16 @@ void Synth::init(Config* config) {
   else {
     throw std::invalid_argument("Reverb algorithm is not supported.");
   }
-
+  isLoading = 0;
 
 }
 
 Synth::~Synth() {
+  isLoading = 1;
   destroy();
   delete filter;
   delete reverberator;
+  isLoading = 0;
 }
 
 void Synth::destroy() {
@@ -178,8 +180,10 @@ void Synth::destroy() {
 }
 
 void Synth::reload(Config* config) {
+  isLoading = 1;
   destroy();
   init(config);
+  isLoading = 0;
 }
 
 void Synth::setMidicode(int channel, int midicode) {
@@ -258,13 +262,17 @@ stk::StkFloat Synth::tick() {
 
 void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nBufferSize) {
   for(unsigned int i=0; i<nBufferSize; i++) {
-    stk::StkFloat value = tick();
-    value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);   
-    stk::StkFloat valueLeft = chorus->tick(value, 0);
-    stk::StkFloat valueRight = chorus->lastOut(1);
+    stk::StkFloat valueLeft = 0.0;
+    stk::StkFloat valueRight = 0.0;
+    if (!isLoading) {
+      stk::StkFloat value = tick();
+      value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);   
+      stk::StkFloat valueLeft = chorus->tick(value, 0);
+      stk::StkFloat valueRight = chorus->lastOut(1);
 
-    valueLeft = reverberator->tick(valueLeft, valueRight, 0);
-    valueRight = reverberator->lastOut(1);
+      valueLeft = reverberator->tick(valueLeft, valueRight, 0);
+      valueRight = reverberator->lastOut(1);
+    }
 
     *samples++ = valueLeft;
     *samples++ = valueRight;;
