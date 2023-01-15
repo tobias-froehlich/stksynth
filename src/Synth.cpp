@@ -89,18 +89,28 @@ void Synth::init(Config* config) {
   );
 
 
-  if (!config->name_occurs("chorus-delay")) {
-    throw std::invalid_argument("Parameter chorus-delay not defined.");
+  if (!config->name_occurs("chorus")) {
+    throw std::invalid_argument("Paramater chorus not defined.");
   }
-  chorus = new stk::Chorus(config->get_float("chorus-delay"));
-  if (!config->name_occurs("chorus-modulation-depth")) {
-    throw std::invalid_argument("Parameter chorus-modulation-depth not defined.");
+  if (config->get_string("chorus").compare("OFF") == 0) {
+    useChorus = 0;
+  } else if (config->get_string("chorus").compare("ON") == 0) {
+    useChorus = 1;
+    if (!config->name_occurs("chorus-delay")) {
+      throw std::invalid_argument("Parameter chorus-delay not defined.");
+    }
+    chorus = new stk::Chorus(config->get_float("chorus-delay"));
+    if (!config->name_occurs("chorus-modulation-depth")) {
+      throw std::invalid_argument("Parameter chorus-modulation-depth not defined.");
+    }
+    chorus->setModDepth(config->get_float("chorus-modulation-depth"));
+    if (!config->name_occurs("chorus-modulation-frequency")) {
+      throw std::invalid_argument("Parameter chorus-modulation-frequency not defined.");
+    }
+    chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
+  } else {
+    throw std::invalid_argument("Paramater chorus must be ON or OFF.");
   }
-  chorus->setModDepth(config->get_float("chorus-modulation-depth"));
-  if (!config->name_occurs("chorus-modulation-frequency")) {
-    throw std::invalid_argument("Parameter chorus-modulation-frequency not defined.");
-  }
-  chorus->setModFrequency(config->get_float("chorus-modulation-frequency"));
 
 
   
@@ -142,16 +152,23 @@ void Synth::init(Config* config) {
   if (!config->name_occurs("reverb-algorithm")) {
     throw std::invalid_argument("Parameter reverb-algorithm not defined.");
   }
-  if (config->get_string("reverb-algorithm").compare("FREE_VERB") == 0) {
+  if (config->get_string("reverb-algorithm").compare("OFF") == 0) {
+     useReverberator = 0;
+  }
+  else if (config->get_string("reverb-algorithm").compare("FREE_VERB") == 0) {
+    useReverberator = 1;
     reverberator = new ReverberatorFreeVerb(config);
   }
   else if (config->get_string("reverb-algorithm").compare("JC_REV") == 0) {
+    useReverberator = 1;
     reverberator = new ReverberatorJCRev(config);
   }
   else if (config->get_string("reverb-algorithm").compare("N_REV") == 0) {
+    useReverberator = 1;
     reverberator = new ReverberatorNRev(config);
   }
   else if (config->get_string("reverb-algorithm").compare("PRC_REV") == 0) {
+    useReverberator = 1;
     reverberator = new ReverberatorPRCRev(config);
   }
   else {
@@ -266,12 +283,19 @@ void Synth::tick(stk::StkFloat* samples, unsigned int nChannels, unsigned int nB
     stk::StkFloat valueRight = 0.0;
     if (!isLoading) {
       stk::StkFloat value = tick();
-      value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);   
-      valueLeft = chorus->tick(value, 0);
-      valueRight = chorus->lastOut(1);
+      value = (1.0 - filterResonanceMix) * value + filterResonanceMix * filter->tick(value);
+      if (useChorus) {
+        valueLeft = chorus->tick(value, 0);
+        valueRight = chorus->lastOut(1);
+      } else {
+        valueLeft = value;
+        valueRight = value;
+      }
 
-      valueLeft = reverberator->tick(valueLeft, valueRight, 0);
-      valueRight = reverberator->lastOut(1);
+      if (useReverberator) {
+        valueLeft = reverberator->tick(valueLeft, valueRight, 0);
+        valueRight = reverberator->lastOut(1);
+      }
     }
 
     *samples++ = valueLeft;

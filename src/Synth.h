@@ -23,7 +23,9 @@ class Synth {
         int recording = 0;
         stk::StkFloat filterResonanceMix;
         stk::BiQuad* filter;
+        int useChorus = 0;
         stk::Chorus* chorus;
+        int useReverberator = 0;
         AbstractReverberator* reverberator;
         unsigned int getIndexFromChannel(int channel);
         Sampler sampler;
