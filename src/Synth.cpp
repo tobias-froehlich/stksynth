@@ -182,7 +182,9 @@ Synth::~Synth() {
   isLoading = 1;
   destroy();
   delete filter;
-  delete reverberator;
+  if (useReverberator) {
+    delete reverberator;
+  }
   isLoading = 0;
 }
 
